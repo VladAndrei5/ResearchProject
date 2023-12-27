@@ -6,35 +6,27 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter))]
 public class SpectrogramGenerator : MonoBehaviour
 {
+    public GameLogic gameLogic;
 
-    //debuggingObject
-    public float[] debugColor;
-
-    //for mesh
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
     List<int> trianglesTemp = new List<int>();
     Color[] colors;
     public Gradient gradient;
-    //for spectrogram logic
     public int numberOfBins;
-    //spectrogram window height and width
     public float spectrogramHeight;
     public float spectrogramWidth;
-    //spectrogram number of vertices/pixels
     private int numberPixelsX;
     public int numberPixelsY = 400;
-    //distance between pixels, horizontally and vertically
     private float pixelHeight;
     private float pixelWidth;
-    //array to hold the previous frame's spectrogram colors
-    private float[] prevColors;
-    //array to update the bottom row of spectrogram
     public float[] spectrum;
-    private float minDecebels;
-    private float maxDecebels;
+    public float minDecebels;
+    public float maxDecebels;
 
+
+    //creates mesh
     void CreateMesh(){
 
         int c1 = 0;
@@ -70,30 +62,11 @@ public class SpectrogramGenerator : MonoBehaviour
 
     }
 
-    float convertToDecebels(float number){
-
-        float dB;
-        if (number != 0)
-            dB = 20.0f * Mathf.Log10(number);
-        else
-            dB = -144.0f;
-
-        minDecebels = -100f;
-        maxDecebels = 0;
-
-        float ndB = Mathf.InverseLerp(minDecebels, maxDecebels, dB);
-        
-        return ndB;
-    }
-
-
+    //updates the colors
     void UpdateColors(){
         //updates the bottom row
-        debugColor = new float[numberPixelsX];
-
         for(int x = 0; x < numberPixelsX; x++){
-                colors[x] = gradient.Evaluate(convertToDecebels(spectrum[x]));
-                debugColor[x] = convertToDecebels(spectrum[x]);
+                colors[x] = gradient.Evaluate(gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrum[x])));
         }
 
         //replaces each upper row with the one below it, starts with the top one
@@ -111,34 +84,18 @@ public class SpectrogramGenerator : MonoBehaviour
 
     void Start(){
         mesh = new Mesh();
-        //need this for meshes with large number of triangles
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         GetComponent<MeshFilter>().mesh = mesh;
-        // (change these values)
-        //numberOfBins = 512;
-        //numberPixelsY = 400
-        //spectrogramSecondsHistory = 128;
-        //spectrogramHeight = 100;
-        //spectrogramWidth = 100;
-        //updatesPerSecond = 1;
-        //minDecebels = 0;
-        //maxDecebels = 20;
-        //-------------------
-        //keep unchanged
+
         numberPixelsX = numberOfBins;
-        //get distance between pixels
         pixelHeight = spectrogramHeight / numberPixelsY;
         pixelWidth = spectrogramWidth / numberPixelsX;
-        //create arrays to hold vertices positions, triangles and the colors
         vertices = new Vector3[numberPixelsX * numberPixelsY];
         colors = new Color[numberPixelsX * numberPixelsY];
-        prevColors = new float[numberPixelsX * numberPixelsY];
         triangles = new int[(numberPixelsX - 1) * (numberPixelsY - 1) * 6];
         spectrum  = new float[numberOfBins];
-        //-------------------
         
-        CreateMesh();
-        
+        CreateMesh();       
     }
 
 
