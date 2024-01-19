@@ -166,11 +166,15 @@ public class BearingGenerator : MonoBehaviour
 
             //get the rotation in degrees of sound source
             float soundRot = gameLogic.getRotationSoundSource(soundSourcesArray[i]);
-            int lineThickness = (int)gameLogic.getBeamWidth(10f);
+            int lineThickness = (int)gameLogic.getLineThickness(10f);
             int lineCenterPoint = Remap(soundRot, -180f, 180f, (float)numberPixelsX - 1, 0f);
             float amplitude = 0f;
 
-            for (int j = 0; j < spectrum.Length; j++)
+            int firstPos = gameLogic.getSliderPos1(spectrum.Length);
+            int secondPos = gameLogic.getSliderPos2(spectrum.Length);
+            Debug.Log(firstPos);
+            Debug.Log(secondPos);
+            for (int j = firstPos; j < secondPos; j++)
             {
                 amplitude = (float)Math.Pow(spectrum[j], 2) + amplitude;
             }
