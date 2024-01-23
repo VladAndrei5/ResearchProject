@@ -110,6 +110,7 @@ public class GameLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
         if (sliderBeamRot.value > 180)
         {
             sliderBeamRot.value = 0;
@@ -118,6 +119,7 @@ public class GameLogic : MonoBehaviour
         {
             sliderBeamRot.value = 180;
         }
+        */
 
         if(sliderBeamRot.value < 0)
         {
@@ -125,7 +127,7 @@ public class GameLogic : MonoBehaviour
         }
         else
         {
-            beamRotation = sliderBeamRot.value;
+            beamRotation = 360 - sliderBeamRot.value;
         }
 
         lengthSensor = sliderSensor.value;
