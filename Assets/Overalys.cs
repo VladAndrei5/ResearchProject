@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BearingOverlay : MonoBehaviour
+public class Overlays : MonoBehaviour
 {
 
     public GameLogic gameLogic;
@@ -23,8 +23,7 @@ public class BearingOverlay : MonoBehaviour
 
         beamDir.transform.rotation = Quaternion.Euler(0f, 0f, gameLogic.beamRotation);
         beamRotOverlay.transform.rotation = Quaternion.Euler(0f, 0f, gameLogic.beamRotation);
-        sliderLeft.value = gameLogic.beamW / 2;
-        sliderRight.value = gameLogic.beamW / 2;
+
 
 
     }

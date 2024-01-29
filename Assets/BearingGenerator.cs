@@ -11,9 +11,7 @@ public class BearingGenerator : MonoBehaviour
     public GameLogic gameLogic;
 
     //create sound sources array
-    public GameObject soundSource1;
-    public GameObject soundSource2;
-    public GameObject[] soundSourcesArray;
+    public GameObject[] soundSourcesArr;
 
     //for mesh
     Mesh mesh;
@@ -24,20 +22,22 @@ public class BearingGenerator : MonoBehaviour
 
     public Gradient gradient;
     public int numberOfBins;
-    public float spectrogramHeight;
-    public float spectrogramWidth;
+    public float bearingHeight;
+    public float bearingWidth;
     public int numberPixelsX;
     public int numberPixelsY;
     private float pixelHeight;
     private float pixelWidth;
-    private float[] toPaint;
-    public float[] spectrum;
+    public float[] spectrumAudioSource;
+    public float[] spectrumBearing;
+    public float[] beamWidthsArr;
+    public float[] frequencyNumberArr;
 
     void CreateMesh(){
 
         int c1 = 0;
-        for(float y = 0; y < spectrogramHeight; y+= pixelHeight){
-            for(float x = 0; x < spectrogramWidth; x+= pixelWidth){
+        for(float y = 0; y < bearingHeight; y+= pixelHeight){
+            for(float x = 0; x < bearingWidth; x+= pixelWidth){
                 vertices[c1] = new Vector3(x,y,0);
                 colors[c1] = gradient.Evaluate(0);
                 c1++;
@@ -71,7 +71,7 @@ public class BearingGenerator : MonoBehaviour
     void UpdateColors(){
 
         for(int x = 0; x < numberPixelsX; x++){
-                colors[x] = gradient.Evaluate(toPaint[x]);
+                colors[x] = gradient.Evaluate(spectrumBearing[x]);
         }
 
         //replaces each upper row with the one below it, starts with the top one
@@ -98,30 +98,32 @@ public class BearingGenerator : MonoBehaviour
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         GetComponent<MeshFilter>().mesh = mesh;
 
-        //create sound source array
-        soundSourcesArray = new GameObject[2];
-        soundSourcesArray[0] = soundSource1;
-        soundSourcesArray[1] = soundSource2;
-
-        //keep unchanged
-
         //get distance between pixels
-        pixelHeight = spectrogramHeight / numberPixelsY;
-        pixelWidth = spectrogramWidth / numberPixelsX;
+        numberOfBins = gameLogic.numberOfBinsBearing;
+        soundSourcesArr = gameLogic.soundSourcesArr;
+
+        pixelHeight = bearingHeight / numberPixelsY;
+        pixelWidth = bearingWidth / numberPixelsX;
         //create arrays to hold vertices positions, triangles and the colors
         vertices = new Vector3[numberPixelsX * numberPixelsY];
         colors = new Color[numberPixelsX * numberPixelsY];
-        toPaint = new float[numberPixelsX];
         triangles = new int[(numberPixelsX - 1) * (numberPixelsY - 1) * 6];
-        spectrum  = new float[numberOfBins];
-        //-------------------
+
+        spectrumAudioSource  = new float[numberOfBins];
+        spectrumBearing = new float[numberPixelsX]; //Note that for the bearing plot, this spectrum is independent from the number of frequency bins, so it can be any length
+        beamWidthsArr = new float[(int)(numberOfBins / gameLogic.divideFrequencyBins)];
+
+        frequencyNumberArr = gameLogic.createFreqNumArr(beamWidthsArr.Length);
+        for(int i = 0; i < frequencyNumberArr.Length; i++){
+            beamWidthsArr[i] = (float)(gameLogic.getBeamWidth(frequencyNumberArr[i]) % 3.1415926535897931);
+        }
         
         CreateMesh();
     }
 
-    void updateToPaint(int lineCenter, int lineThick, float amp)
+    void updateSpectrumBearing(int lineCenter, int lineThick, float amp)
     {
-        int arrCutoff = toPaint.Length - 1;
+        int arrCutoff = spectrumBearing.Length - 1;
         int[] temp = new int[lineThick * 2 + 1];
 
         int lineStart = lineCenter - lineThick;
@@ -142,50 +144,46 @@ public class BearingGenerator : MonoBehaviour
             }
         }
 
-
         for (int i = 0; i < temp.Length; i++)
         {
-            toPaint[temp[i]] = toPaint[temp[i]] + amp; ;
+            spectrumBearing[temp[i]] = spectrumBearing[temp[i]] + amp; ;
         }
-
-        //toPaint[lineCenter] = 0.5f;
-
-
     }
 
     void FixedUpdate(){
+        soundSourcesArr = gameLogic.soundSourcesArr;
 
-        //random noise
-        for(int i = 0; i < toPaint.Length; i++){
-            toPaint[i] = Random.Range(0f,0.1f);
+        for(int i = 0; i < spectrumBearing.Length; i++){
+            spectrumBearing[i] = 0f;
         }
 
+        Debug.Log(soundSourcesArr.Length);
         //for each sound source in the scene
-        for(int i = 0; i < soundSourcesArray.Length; i++){
-            soundSourcesArray[i].GetComponent<AudioSource>().GetSpectrumData(spectrum, 0, FFTWindow.BlackmanHarris);
+        for(int i = 0; i < soundSourcesArr.Length; i++){
+            soundSourcesArr[i].GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
+            float soundRot = gameLogic.getRotationSoundSource(soundSourcesArr[i]);
 
-            //get the rotation in degrees of sound source
-            float soundRot = gameLogic.getRotationSoundSource(soundSourcesArray[i]);
-            int lineThickness = (int)gameLogic.getLineThickness(10f);
+            float pixelsPerDegree = numberPixelsX / 360f;
             int lineCenterPoint = Remap(soundRot, -180f, 180f, (float)numberPixelsX - 1, 0f);
-            float amplitude = 0f;
 
-            int firstPos = gameLogic.getSliderPos1(spectrum.Length);
-            int secondPos = gameLogic.getSliderPos2(spectrum.Length);
-            Debug.Log(firstPos);
-            Debug.Log(secondPos);
+            int firstPos = gameLogic.getSliderPos1(spectrumAudioSource.Length / gameLogic.divideFrequencyBins);
+            int secondPos = gameLogic.getSliderPos2(spectrumAudioSource.Length / gameLogic.divideFrequencyBins);
+
             for (int j = firstPos; j < secondPos; j++)
             {
-                amplitude = (float)Math.Pow(spectrum[j], 2) + amplitude;
+                int lineThickness = (int)(beamWidthsArr[j] * Mathf.Rad2Deg * pixelsPerDegree);
+                //int lineThickness = 5;
+                float amplitude = spectrumAudioSource[j] * spectrumAudioSource[j];
+                //float amplitude = 10000;
+                updateSpectrumBearing(lineCenterPoint, lineThickness, amplitude);
             }
 
-            amplitude = gameLogic.normaliseSoundDecebels( gameLogic.convertToDecebels((float)Math.Sqrt(amplitude)));
-            //Debug.Log(amplitude);
-            updateToPaint(lineCenterPoint, lineThickness, amplitude);
-
-            //toPaint[lineCenterPoint] = toPaint[lineCenterPoint] + amplitude;
-
         }
+
+        for (int i = 0; i < spectrumBearing.Length; i++){
+            spectrumBearing[i] = gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumBearing[i] / (numberOfBins / 2))) + Random.Range(0f,0.1f);
+        }
+
         UpdateColors();
     }
 }

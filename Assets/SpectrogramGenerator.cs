@@ -7,24 +7,24 @@ using UnityEngine;
 public class SpectrogramGenerator : MonoBehaviour
 {
     public GameLogic gameLogic;
-
+    public GameObject[] soundSourcesArr;
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
     List<int> trianglesTemp = new List<int>();
     Color[] colors;
     public Gradient gradient;
-    public int numberOfBins;
+    private int numberOfBins;
     public float spectrogramHeight;
     public float spectrogramWidth;
     private int numberPixelsX;
     public int numberPixelsY = 400;
     private float pixelHeight;
     private float pixelWidth;
-    public float[] spectrum;
-    public float minDecebels;
-    public float maxDecebels;
-
+    public float[] spectrumAudioSource;
+    public float[] spectrumSpectrogram;
+    public float[] beamWidthsArr;
+    public float[] frequencyNumberArr;
 
     //creates mesh
     void CreateMesh(){
@@ -66,7 +66,7 @@ public class SpectrogramGenerator : MonoBehaviour
     void UpdateColors(){
         //updates the bottom row
         for(int x = 0; x < numberPixelsX; x++){
-                colors[x] = gradient.Evaluate(gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrum[x])));
+                colors[x] = gradient.Evaluate(gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumSpectrogram[x])));
         }
 
         //replaces each upper row with the one below it, starts with the top one
@@ -87,22 +87,64 @@ public class SpectrogramGenerator : MonoBehaviour
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         GetComponent<MeshFilter>().mesh = mesh;
 
-        numberPixelsX = numberOfBins;
+        
+        numberOfBins = gameLogic.numberOfBinsSpectrogram;
+        soundSourcesArr = gameLogic.soundSourcesArr;
+
+        numberPixelsX = (int)(numberOfBins / gameLogic.divideFrequencyBins);
         pixelHeight = spectrogramHeight / numberPixelsY;
         pixelWidth = spectrogramWidth / numberPixelsX;
         vertices = new Vector3[numberPixelsX * numberPixelsY];
         colors = new Color[numberPixelsX * numberPixelsY];
         triangles = new int[(numberPixelsX - 1) * (numberPixelsY - 1) * 6];
-        spectrum  = new float[numberOfBins];
-        
-        CreateMesh();       
+        spectrumAudioSource  = new float[numberOfBins];
+        spectrumSpectrogram = new float[numberPixelsX];
+        beamWidthsArr = new float[numberPixelsX];
+
+        frequencyNumberArr = gameLogic.createFreqNumArr(spectrumSpectrogram.Length);
+        for(int i = 0; i < spectrumSpectrogram.Length; i++){
+            spectrumSpectrogram[i] = 0f;
+            beamWidthsArr[i] = gameLogic.getBeamWidth(frequencyNumberArr[i]);
+        }
+
+
+        CreateMesh();     
     }
 
 
     void FixedUpdate(){
+        soundSourcesArr = gameLogic.soundSourcesArr;
 
-        AudioListener.GetSpectrumData(spectrum , 0, FFTWindow.BlackmanHarris);
+        for(int i = 0; i < spectrumSpectrogram.Length; i++){
+            spectrumSpectrogram[i] = 0f;
+        }
+
+        //Go through each sound source in the scene
+        for(int i = 0; i < soundSourcesArr.Length; i++){
+
+            //and get its spectrum data
+            soundSourcesArr[i].GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
+            float soundRotRelative = gameLogic.getRelativeRotationToBeam(soundSourcesArr[i]);
+
+            for(int j = 0; j < spectrumSpectrogram.Length; j++){
+                
+                //binary mask
+                /*
+                if( soundRotRelative < (beamWidthsArr[j] * Mathf.Rad2Deg / 2)){
+
+                    spectrumSpectrogram[j] += spectrumAudioSource[j];  
+
+                }
+                */
+                
+
+                //mask using the formula given by the sound intensity
+                spectrumSpectrogram[j] += spectrumAudioSource[j] * gameLogic.getSoundIntensity(soundRotRelative , frequencyNumberArr[i]); 
+
+            }
+            
+        }
+
         UpdateColors();
-
     }
 }

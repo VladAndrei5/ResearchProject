@@ -3,39 +3,79 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class GameLogic : MonoBehaviour
 {
     // Start is called before the first frame update
-    public Slider slider1;
-    public Slider slider2;
+
+    public GameObject beamVector;
+    public GameObject soundSource1;
+    public GameObject soundSource2;
+    public GameObject soundSource3;
+    public GameObject[] soundSourcesArr;
+
+
+    public int numberOfBinsSpectrogram;
+    public int numberOfBinsBearing;
+
+    public Slider sliderMinFreqBound;
+    public Slider sliderMaxFreqBound;
     public Slider sliderBeamRot;
-    public Slider sliderSensor;
+    public Slider sliderScanningArea;
     public float lengthSensor;
     public float speedOfSound;
     public float beamRotation;
-    public float beamW;
+    public float scanningArea;
     private float minDecebels = -144f;
     private float maxDecebels = 0f;
     private int minFreq = 0;
-    private int maxFreq = 20000;
+    private int maxFreq = 10000;
 
+    public int divideFrequencyBins;
 
+    /*returns a position in the array
+    proportional to the minimum frequency bound
+    */
     public int getSliderPos1(int arrayLength)
     {
-        return (int)((slider1.value / 100) * arrayLength);
+        return (int)(sliderMinFreqBound.value * arrayLength);
     }
+    
+    /*returns a position in the array
+    proportional to the maximum frequency bound
+    */
     public int getSliderPos2(int arrayLength)
     {
-        return (int)((slider2.value / 100) * arrayLength);
+        return (int)(sliderMaxFreqBound.value * arrayLength);
     }
 
-    public float getFrequencyBin(int arrayLength, int currentPos)
+    public float[] createFreqNumArr(int arrayLength)
     {
-        return ((maxFreq / arrayLength) * (currentPos + 1));
+        float[] arr = new float[arrayLength];
+        float increment = maxFreq / arrayLength;
+        float multiplier = 1;
+        for(int i = 0; i < arrayLength; i++){
+            arr[i] = increment * multiplier;
+            multiplier++;
+        }
+        return arr;
     }
 
-    //returns rot angle in degrees
+
+    /*for a given array position and array length
+    it returns the frequency for said bin
+    */
+    public float getFrequencyBin(int arrayLength, int i)
+    {
+        return ((maxFreq / arrayLength) * (i + 1));
+    }
+
+    /*returns the angle of the object in relation to the vector facing North
+    North directly above origin is 0 degrees, and South is 180 degrees.
+    If the object is on the right side of the map, the angle will be given clockwise from 0 to -180
+    If the object is on the left side of the map, the angle will be given anti-clockwise from 0 to +180
+    */
     public float getRotationSoundSource(GameObject soundSource)
     {
         float angle;
@@ -65,6 +105,28 @@ public class GameLogic : MonoBehaviour
         return angle;
     }
 
+    /*returns the magnitude of the angle between the vector pointing
+     towards the soundsource and the beam itself 
+    */
+    public float getRelativeRotationToBeam(GameObject soundSource)
+    {
+        float angle = getRotationSoundSource(soundSource);
+        if(angle < 0){
+            angle = (180 - ( -1 *angle)) + 180;
+        }
+
+        float result = Math.Abs(angle - getBeamRot());
+
+        if(result <= 180){
+            return result;
+        }
+        else{
+            return Math.Abs(360 - result);
+        }
+    }
+
+    /*converts amplitude stored in spectrum data to decebels
+    */
     public float convertToDecebels(float number)
     {
 
@@ -77,26 +139,35 @@ public class GameLogic : MonoBehaviour
         return dB;
     }
 
+    /*normalises a value given in decebels
+    */
     public float normaliseSoundDecebels( float value)
     {
         float result = Mathf.InverseLerp(minDecebels, maxDecebels, value);
         return result;
     }
 
+    /*returns the angle of the beam in relation to the vector facing North
+    going anti-clockwise from 0 to 360
+    */
     public float getBeamRot()
     {
       
         return Math.Abs(beamRotation % 360);
     }
 
+    /*for a given frequency returns the beam width from which it can be heard
+    in radians
+    */
     public float getBeamWidth(float frequency){
-        beamW = speedOfSound / (frequency * lengthSensor);
         return speedOfSound / (frequency * lengthSensor);
     }
 
-    public float getLineThickness(float f)
+
+    //returns the number of pixels that should be added to the bearing  waterfall
+    public float getLineThickness(float f, float beamWidth)
     {
-        return ( (100 - slider1.value) / 100) * getBeamWidth(f);
+        return ( (100 - sliderMinFreqBound.value) / 100) * beamWidth;
     }
 
     public float getSoundIntensity(float theta, float frequency){
@@ -104,23 +175,15 @@ public class GameLogic : MonoBehaviour
     }
 
     void Start(){
-        beamW = 0f;
+        soundSourcesArr = new GameObject[3];
+        soundSourcesArr[0] = soundSource1;
+        soundSourcesArr[1] = soundSource2;
+        soundSourcesArr[2] = soundSource3;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        /*
-        if (sliderBeamRot.value > 180)
-        {
-            sliderBeamRot.value = 0;
-        }
-        else if (sliderBeamRot.value < -180)
-        {
-            sliderBeamRot.value = 180;
-        }
-        */
-
         if(sliderBeamRot.value < 0)
         {
             beamRotation = sliderBeamRot.value * -1;
@@ -129,7 +192,5 @@ public class GameLogic : MonoBehaviour
         {
             beamRotation = 360 - sliderBeamRot.value;
         }
-
-        lengthSensor = sliderSensor.value;
     }
 }
