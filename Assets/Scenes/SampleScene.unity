@@ -2938,7 +2938,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destination: {x: 0, y: 0, z: 0}
-  speed: 15
+  speed: 5
   arriveCheck: 0.1
   distance: 0
 --- !u!1 &1315866154
@@ -3492,7 +3492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destination: {x: 0, y: 0, z: 0}
-  speed: 15
+  speed: 5
   arriveCheck: 0.1
   distance: 0
 --- !u!82 &1697028399
@@ -3955,7 +3955,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destination: {x: 0, y: 0, z: 0}
-  speed: 15
+  speed: 5
   arriveCheck: 0.1
   distance: 0
 --- !u!82 &1932512789

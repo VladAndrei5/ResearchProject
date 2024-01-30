@@ -15,7 +15,7 @@ public class OverlaySpectrogram : MonoBehaviour
     private bool isSliderMinFreqPressed = false;
     private bool isSliderMaxFreqPressed = false;
 
-    private float minDist = 0.05f;
+    private float minDist = 0.01f;
 
     void Start()
     {

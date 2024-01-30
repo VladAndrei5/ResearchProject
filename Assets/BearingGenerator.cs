@@ -181,7 +181,7 @@ public class BearingGenerator : MonoBehaviour
         }
 
         for (int i = 0; i < spectrumBearing.Length; i++){
-            spectrumBearing[i] = gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumBearing[i] / (numberOfBins / 2))) + Random.Range(0f,0.1f);
+            spectrumBearing[i] = gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumBearing[i] / 100)) + Random.Range(0f,0.05f);
         }
 
         UpdateColors();
