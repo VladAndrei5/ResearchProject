@@ -7,6 +7,7 @@ using UnityEngine;
 public class SpectrogramGenerator : MonoBehaviour
 {
     public GameLogic gameLogic;
+    public BearingOverlay bearingOverlay;
     public GameObject[] soundSourcesArr;
     Mesh mesh;
     Vector3[] vertices;
@@ -130,16 +131,20 @@ public class SpectrogramGenerator : MonoBehaviour
                 
                 //binary mask
                 /*
-                if( soundRotRelative < (beamWidthsArr[j] * Mathf.Rad2Deg / 2)){
+                if(soundRotRelative < bearingOverlay.getScanningWidth()){
+                    if( soundRotRelative < (beamWidthsArr[j] * Mathf.Rad2Deg / 2)){
 
-                    spectrumSpectrogram[j] += spectrumAudioSource[j];  
+                        spectrumSpectrogram[j] += spectrumAudioSource[j];  
 
+                    }
                 }
                 */
-                
 
+                
                 //mask using the formula given by the sound intensity
-                spectrumSpectrogram[j] += spectrumAudioSource[j] * gameLogic.getSoundIntensity(soundRotRelative , frequencyNumberArr[i]); 
+                if(soundRotRelative < (bearingOverlay.getScanningWidth() /2 )){
+                    spectrumSpectrogram[j] += spectrumAudioSource[j] * gameLogic.getSoundIntensity(soundRotRelative , frequencyNumberArr[i]); 
+                }
 
             }
             
