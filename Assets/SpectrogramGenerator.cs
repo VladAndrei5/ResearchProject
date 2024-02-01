@@ -130,21 +130,22 @@ public class SpectrogramGenerator : MonoBehaviour
             for(int j = 0; j < spectrumSpectrogram.Length; j++){
                 
                 //binary mask
-                /*
-                if(soundRotRelative < bearingOverlay.getScanningWidth()){
-                    if( soundRotRelative < (beamWidthsArr[j] * Mathf.Rad2Deg / 2)){
+                
+                if( (soundRotRelative < (bearingOverlay.getScanningWidth() /2) ||  ( soundRotRelative < (beamWidthsArr[j] * Mathf.Rad2Deg / 2)) )){
 
-                        spectrumSpectrogram[j] += spectrumAudioSource[j];  
-
-                    }
+                    spectrumSpectrogram[j] += spectrumAudioSource[j];  
+                
                 }
-                */
+                
 
                 
                 //mask using the formula given by the sound intensity
+
+                /*
                 if(soundRotRelative < (bearingOverlay.getScanningWidth() /2 )){
                     spectrumSpectrogram[j] += spectrumAudioSource[j] * gameLogic.getSoundIntensity(soundRotRelative , frequencyNumberArr[i]); 
                 }
+                */
 
             }
             
