@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Audio;
 
 public class GameLogic : MonoBehaviour
 {
     // Start is called before the first frame update
 
+    
     public GameObject beamVector;
     public GameObject soundSource1;
     public GameObject soundSource2;
@@ -22,17 +24,27 @@ public class GameLogic : MonoBehaviour
     public Slider sliderMinFreqBound;
     public Slider sliderMaxFreqBound;
     public Slider sliderBeamRot;
-    public Slider sliderScanningArea;
+    public Slider beamWidth;
     public float lengthSensor;
     public float speedOfSound;
     public float beamRotation;
-    public float scanningArea;
     private float minDecebels = -144f;
     private float maxDecebels = 0f;
-    private int minFreq = 0;
+    //private int minFreq = 0;
     private int maxFreq = 10000;
 
     public int divideFrequencyBins;
+
+
+
+    public AudioMixer audioMixer;  // Reference to the Audio Mixer
+
+
+    public float getScanningWidth(){
+        float newMin = 0;
+        float newMax = 360;
+        return (beamWidth.value * 2 * (newMax - newMin)) + newMin;
+    }
 
     /*returns a position in the array
     proportional to the minimum frequency bound
@@ -152,6 +164,14 @@ public class GameLogic : MonoBehaviour
     */
     public float getBeamRot()
     {
+        if(sliderBeamRot.value < 0)
+        {
+            beamRotation = sliderBeamRot.value * -1;
+        }
+        else
+        {
+            beamRotation = 360 - sliderBeamRot.value;
+        }
       
         return Math.Abs(beamRotation % 360);
     }
@@ -174,6 +194,12 @@ public class GameLogic : MonoBehaviour
         return (float) Math.Exp( (-1 * Math.Pow(theta, 2) ) / (2 * Math.Pow( (speedOfSound / (frequency * lengthSensor)) , 2) ) );
     }
 
+    public void SetCutoffValues(int i, float lp, float hp)
+    {
+        audioMixer.SetFloat("AudSource" + i.ToString() + "LP", hp);
+        audioMixer.SetFloat("AudSource" + i.ToString() + "HP", lp);
+    }
+
     void Start(){
         soundSourcesArr = new GameObject[3];
         soundSourcesArr[0] = soundSource1;
@@ -184,13 +210,24 @@ public class GameLogic : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if(sliderBeamRot.value < 0)
-        {
-            beamRotation = sliderBeamRot.value * -1;
+
+        
+        for(int i = 0; i < soundSourcesArr.Length; i++){
+
+            float rot = getRelativeRotationToBeam(soundSourcesArr[i]);
+
+            float lowPassCutoffValue = 10000;
+            float highPassCutoffValue = 10;
+
+            if(getScanningWidth() / 2 > rot){
+                lowPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos1(numberOfBinsSpectrogram / divideFrequencyBins));
+                highPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos2(numberOfBinsSpectrogram / divideFrequencyBins));
+            }
+
+            SetCutoffValues(i+1, lowPassCutoffValue, highPassCutoffValue);
+
         }
-        else
-        {
-            beamRotation = 360 - sliderBeamRot.value;
-        }
+        
+
     }
 }

@@ -169,19 +169,21 @@ public class BearingGenerator : MonoBehaviour
             int firstPos = gameLogic.getSliderPos1(spectrumAudioSource.Length / gameLogic.divideFrequencyBins);
             int secondPos = gameLogic.getSliderPos2(spectrumAudioSource.Length / gameLogic.divideFrequencyBins);
 
+            //Debug.Log("FirstPos " + firstPos);
+            //Debug.Log("SecondPos " + secondPos );
+
             for (int j = firstPos; j < secondPos; j++)
             {
                 int lineThickness = (int)(beamWidthsArr[j] * Mathf.Rad2Deg * pixelsPerDegree);
-                //int lineThickness = 5;
                 float amplitude = spectrumAudioSource[j] * spectrumAudioSource[j];
-                //float amplitude = 10000;
+
                 updateSpectrumBearing(lineCenterPoint, lineThickness, amplitude);
             }
 
         }
 
         for (int i = 0; i < spectrumBearing.Length; i++){
-            spectrumBearing[i] = gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumBearing[i] / 100)) + Random.Range(0f,0.05f);
+            spectrumBearing[i] = gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumBearing[i]));
         }
 
         UpdateColors();
