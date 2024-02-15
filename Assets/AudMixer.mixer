@@ -183,14 +183,20 @@ AudioMixerController:
   m_EnableSuspend: 1
   m_UpdateMode: 0
   m_ExposedParameters:
+  - guid: 7f972ac974577a145bf7bda9f39548d1
+    name: AudSource1A
   - guid: 07eafdd113a95774d9e544717f51fa75
     name: AudSource1HP
   - guid: b8b31dc46024bbb49acd71c38a0d2141
     name: AudSource1LP
+  - guid: b80b4626d6507384e98cc7ae5efa6e39
+    name: AudSource2A
   - guid: 8ff12423fa795c341834d6fc63e37670
     name: AudSource2HP
   - guid: 209c5109987e59542b8c00f44fe40152
     name: AudSource2LP
+  - guid: 657bad0c794d93b4b92f86baa140b897
+    name: AudSource3A
   - guid: 55fb0bcb43c932b43b5871e21ee5ff14
     name: AudSource3HP
   - guid: d1f82449b3cae4747a61dfc9cc21ae23
@@ -250,13 +256,20 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 22939695f4e347e45a216fbac822ab15
   m_FloatValues:
+    dbd4747073adbd945950e9df16174432: 1
     07eafdd113a95774d9e544717f51fa75: 10
     8ff12423fa795c341834d6fc63e37670: 10
+    ed8d4bf3116cde643ad3b826de26d154: 1
     b8b31dc46024bbb49acd71c38a0d2141: 22000
+    b80b4626d6507384e98cc7ae5efa6e39: 0
     209c5109987e59542b8c00f44fe40152: 22000
     d1f82449b3cae4747a61dfc9cc21ae23: 22000
+    7f972ac974577a145bf7bda9f39548d1: 0
     d96f6c5aefa7e804b9150a416e54e636: 1
     55fb0bcb43c932b43b5871e21ee5ff14: 10
+    657bad0c794d93b4b92f86baa140b897: -80
+    bff3c0adb1de43545b51eda9131641a1: 1
+    bfc76a0ff8853be4c8d8aeb3e85f4c9b: 1
   m_TransitionOverrides: {}
 --- !u!244 &3577827562748042251
 AudioMixerEffectController:

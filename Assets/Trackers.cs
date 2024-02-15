@@ -69,5 +69,65 @@ public class Trackers : MonoBehaviour
             wTrackers[i].transform.rotation = Quaternion.Euler(0f, 0f, soundRot + 180f);
         }
 
+        if (Input.GetMouseButtonDown(0)) // Check for left mouse button click
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            //Debug.Log("Mouse clicked on " );
+
+            for(int i = 0; i < bTrackers.Length; i++)
+            {
+                if (bTrackers[i] != null && bTrackers[i].activeInHierarchy) // Check if the object exists and is active
+                {
+                    if (Physics.Raycast(ray, out hit) && hit.collider.gameObject == bTrackers[i])
+                    {
+                        
+                        Color spriteColor = bTrackers[i].GetComponent<SpriteRenderer>().color;
+                        Color spriteWColor = wTrackers[i].GetComponent<SpriteRenderer>().color;
+                        if(spriteColor.a == 255f){
+                            spriteColor.g = 0f;
+                            spriteColor.b = 0f;
+
+                            spriteWColor.g = 0f;
+                            spriteWColor.b = 0f;
+                        }
+                        else{
+                            spriteColor.a = 255f;
+
+                            spriteWColor.a = 255f;
+                        }
+                        bTrackers[i].GetComponent<SpriteRenderer>().color = spriteColor;
+                        wTrackers[i].GetComponent<SpriteRenderer>().color = spriteWColor;
+                        Debug.Log("Mouse clicked on " + bTrackers[i].name);
+                        //obj.SetActive(false);
+                    }
+                }
+            }
+
+            /*
+            foreach (GameObject obj in bTrackers)
+            {
+                if (obj != null && obj.activeInHierarchy) // Check if the object exists and is active
+                {
+                    if (Physics.Raycast(ray, out hit) && hit.collider.gameObject == obj)
+                    {
+
+                        Color spriteColor = obj.GetComponent<SpriteRenderer>().color;
+                        if(spriteColor.a == 255f){
+                            spriteColor.g = 0f;
+                            spriteColor.b = 0f;
+                        }
+                        else{
+                            spriteColor.a = 255f;
+                        }
+                        obj.GetComponent<SpriteRenderer>().color = spriteColor;
+                        Debug.Log("Mouse clicked on " + obj.name);
+                        //obj.SetActive(false);
+                    }
+                }
+            }
+            */
+        }
+
     }
 }

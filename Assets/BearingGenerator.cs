@@ -157,7 +157,7 @@ public class BearingGenerator : MonoBehaviour
             spectrumBearing[i] = 0f;
         }
 
-        Debug.Log(soundSourcesArr.Length);
+        //Debug.Log(soundSourcesArr.Length);
         //for each sound source in the scene
         for(int i = 0; i < soundSourcesArr.Length; i++){
             soundSourcesArr[i].GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
@@ -183,7 +183,7 @@ public class BearingGenerator : MonoBehaviour
         }
 
         for (int i = 0; i < spectrumBearing.Length; i++){
-            spectrumBearing[i] = gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumBearing[i]));
+            spectrumBearing[i] = gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumBearing[i])) + Random.Range(0f, (gameLogic.sliderMaxFreqBound.value - gameLogic.sliderMinFreqBound.value) / 40);
         }
 
         UpdateColors();

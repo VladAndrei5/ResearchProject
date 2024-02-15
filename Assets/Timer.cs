@@ -9,6 +9,9 @@ public class Timer : MonoBehaviour
     private float currentTime;
     public Text timerText;
 
+    public Light spotlight1;
+    public Light spotlight2;
+
     void Start()
     {
         currentTime = totalTime;
@@ -18,9 +21,17 @@ public class Timer : MonoBehaviour
     {
         if (currentTime > 0)
         {
-            if (currentTime < 10)
+            if (currentTime < 15)
             {
                 timerText.color = Color.red;
+                float rotationAmount = 300f * Time.deltaTime;
+
+                // Create a rotation increment based on the calculated rotation amount
+                Quaternion rotationIncrement = Quaternion.Euler(0f, rotationAmount, 0f);
+
+                // Apply the rotation increment to the current rotation
+                spotlight1.transform.rotation *= rotationIncrement;
+                spotlight2.transform.rotation *= rotationIncrement;
             }
 
             currentTime -= Time.deltaTime;

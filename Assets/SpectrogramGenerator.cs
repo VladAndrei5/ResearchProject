@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random=UnityEngine.Random;
 
 [RequireComponent(typeof(MeshFilter))]
 public class SpectrogramGenerator : MonoBehaviour
@@ -67,7 +68,7 @@ public class SpectrogramGenerator : MonoBehaviour
     void UpdateColors(){
         //updates the bottom row
         for(int x = 0; x < numberPixelsX; x++){
-                colors[x] = gradient.Evaluate(gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumSpectrogram[x])));
+                colors[x] = gradient.Evaluate(gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumSpectrogram[x]))  +  Random.Range(0f, (gameLogic.sliderMaxFreqBound.value - gameLogic.sliderMinFreqBound.value) / 40));
         }
 
         //replaces each upper row with the one below it, starts with the top one

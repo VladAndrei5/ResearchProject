@@ -17,6 +17,8 @@ public class OverlaySpectrogram : MonoBehaviour
 
     private float minDist = 0.01f;
 
+    public GameLogic gameLogic;
+
     void Start()
     {
         meshFilter = GetComponent<MeshFilter>();
