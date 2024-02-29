@@ -12,10 +12,9 @@ public class GameLogic : MonoBehaviour
 
     
     public GameObject beamVector;
-    public GameObject soundSource1;
-    public GameObject soundSource2;
-    public GameObject soundSource3;
     public GameObject[] soundSourcesArr;
+
+    public GameObject noise;
 
 
     public int numberOfBinsSpectrogram;
@@ -37,13 +36,8 @@ public class GameLogic : MonoBehaviour
 
     public int divideFrequencyBins;
 
-    
-
-
-
-    public AudioMixer audioMixer;  // Reference to the Audio Mixer
-
-
+ 
+    //returns the area being scanneded in degrees
     public float getScanningWidth(){
         float newMin = 0;
         float newMax = 360;
@@ -76,6 +70,14 @@ public class GameLogic : MonoBehaviour
             multiplier++;
         }
         return arr;
+    }
+
+    public float getLowerBoundFreq(){
+        return getFrequencyBin(frequencyNumberArr.Length, getSliderPos1(frequencyNumberArr.Length));
+    }
+
+       public float getHigherBoundFreq(){
+        return getFrequencyBin(frequencyNumberArr.Length, getSliderPos2(frequencyNumberArr.Length));
     }
 
 
@@ -122,7 +124,7 @@ public class GameLogic : MonoBehaviour
     }
 
     /*returns the magnitude of the angle between the vector pointing
-     towards the soundsource and the beam itself 
+     towards the soundsource and the beam itself in degrees
     */
     public float getRelativeRotationToBeam(GameObject soundSource)
     {
@@ -183,7 +185,7 @@ public class GameLogic : MonoBehaviour
     /*for a given frequency returns the beam width from which it can be heard
     in radians
     */
-    public float getBeamWidth(float frequency){
+    public float getBeamWidthAtFreq(float frequency){
         return speedOfSound / (frequency * lengthSensor);
     }
 
@@ -198,83 +200,59 @@ public class GameLogic : MonoBehaviour
         return (float) Math.Exp( (-1 * Math.Pow(theta, 2) ) / (2 * Math.Pow( (speedOfSound / (frequency * lengthSensor)) , 2) ) );
     }
 
-    public void SetCutoffValues(int i, float lp, float hp, float attenuation)
+    public void SetCutoffValues(GameObject source, float lp, float hp)
     {
-        audioMixer.SetFloat("AudSource" + i.ToString() + "LP", hp);
-        audioMixer.SetFloat("AudSource" + i.ToString() + "HP", lp);
-        audioMixer.SetFloat("AudSource" + i.ToString() + "A", attenuation);
+        AudioLowPassFilter lowPassFilter = source.GetComponent<AudioLowPassFilter>();
+        AudioHighPassFilter highPassFilter = source.GetComponent<AudioHighPassFilter>();
+        lowPassFilter.cutoffFrequency = lp;
+        highPassFilter.cutoffFrequency = hp;
+
     }
 
     void Start(){
-        soundSourcesArr = new GameObject[3];
-        soundSourcesArr[0] = soundSource1;
-        soundSourcesArr[1] = soundSource2;
-        soundSourcesArr[2] = soundSource3;
+        GameObject[] foundObjects = GameObject.FindGameObjectsWithTag("AudioSourceObj");
+        soundSourcesArr = new GameObject[foundObjects.Length];
+
+        // Copy found objects to the gameObjectsArray
+        for (int i = 0; i < foundObjects.Length; i++){
+            soundSourcesArr[i] = foundObjects[i];
+        }
+
 
         frequencyNumberArr = createFreqNumArr((int)(numberOfBinsSpectrogram / divideFrequencyBins));
         beamWidthsArr = new float[(int)(numberOfBinsSpectrogram / divideFrequencyBins)];
 
         for(int i = 0; i < frequencyNumberArr.Length; i++){
-            beamWidthsArr[i] = getBeamWidth(frequencyNumberArr[i]);
+            beamWidthsArr[i] = getBeamWidthAtFreq(frequencyNumberArr[i]);
         }
-
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
 
+
+        float lowPassCutoffValue = 10000;
+        float highPassCutoffValue = 10;
         
         for(int i = 0; i < soundSourcesArr.Length; i++){
-
             float rot = getRelativeRotationToBeam(soundSourcesArr[i]);
+            highPassCutoffValue = 10000;
+            lowPassCutoffValue = 10;
 
-            float lowPassCutoffValue = 10000;
-            float highPassCutoffValue = 10;
-            float attenuation = -80f;
-
-            bool checking = true;
-
-            
-
-            if(getScanningWidth() / 2 > rot){
-                    lowPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos1(numberOfBinsSpectrogram / divideFrequencyBins));
-                    highPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos2(numberOfBinsSpectrogram / divideFrequencyBins));
-                    attenuation = 0;
-            }
-            
-
-            
-            /*
-            for(int j = 0; j < frequencyNumberArr.Length; j++){
-                if( (rot < (beamWidthsArr[j] * Mathf.Rad2Deg / 2) ) && (checking == true) ){
-                    checking = false;
-                    lowPassCutoffValue = frequencyNumberArr[j];
-                    highPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos2(numberOfBinsSpectrogram / divideFrequencyBins));
+            for (int j = 0; j < beamWidthsArr.Length; j++){
+                 if ((rot < (getScanningWidth() / 2) || (rot < (beamWidthsArr[j] * Mathf.Rad2Deg / 2)))){
+                    highPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos1(numberOfBinsSpectrogram / divideFrequencyBins));
+                    lowPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos2(numberOfBinsSpectrogram / divideFrequencyBins));
                 }
-            }
-            if(getScanningWidth() >= (beamWidthsArr[0] * Mathf.Rad2Deg) ){
-                if(getScanningWidth() / 2 > rot){
-                    lowPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos1(numberOfBinsSpectrogram / divideFrequencyBins));
-                    highPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos2(numberOfBinsSpectrogram / divideFrequencyBins));
-                }
-            }
-            else{
-                for(int j = 0; j < frequencyNumberArr.Length; j++){
-                    if( (rot < (beamWidthsArr[j] * Mathf.Rad2Deg / 2) ) && (checking == true) ){
-                        checking = false;
-                        lowPassCutoffValue = frequencyNumberArr[j];
-                        highPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos2(numberOfBinsSpectrogram / divideFrequencyBins));
-                    }
-                }
-            }
-            */
 
-            
-
-            SetCutoffValues(i+1, lowPassCutoffValue, highPassCutoffValue, attenuation);
-
+            }
+        
+            SetCutoffValues(soundSourcesArr[i], lowPassCutoffValue, highPassCutoffValue);
         }
+        highPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos1(numberOfBinsSpectrogram / divideFrequencyBins));
+        lowPassCutoffValue = getFrequencyBin(numberOfBinsSpectrogram / divideFrequencyBins, getSliderPos2(numberOfBinsSpectrogram / divideFrequencyBins));
+        SetCutoffValues(noise, lowPassCutoffValue, highPassCutoffValue);
         
 
     }

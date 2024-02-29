@@ -2,6 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
 using Random=UnityEngine.Random;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -10,17 +13,25 @@ public class SpectrogramGenerator : MonoBehaviour
     public GameLogic gameLogic;
     public BearingOverlay bearingOverlay;
     public GameObject[] soundSourcesArr;
+    public GameObject noise;
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
     List<int> trianglesTemp = new List<int>();
     Color[] colors;
+    Color[] historyCol1;
+    Color[] historyCol2;
     public Gradient gradient;
     private int numberOfBins;
     public float spectrogramHeight;
     public float spectrogramWidth;
+    public int resolution;
     private int numberPixelsX;
-    public int numberPixelsY = 400;
+    private int numberPixelsY;
+    private float resPerSec1;
+    private float resPerSec2;
+    public float numbSeconds1;
+    public float numbSeconds2;
     private float pixelHeight;
     private float pixelWidth;
     public float[] spectrumAudioSource;
@@ -28,15 +39,50 @@ public class SpectrogramGenerator : MonoBehaviour
     public float[] beamWidthsArr;
     public float[] frequencyNumberArr;
 
+    public TextMeshProUGUI  timeTextAxis1;
+    public TextMeshProUGUI  timeTextAxis2;   
+    public TextMeshProUGUI  timeTextAxis3;
+    public TextMeshProUGUI  timeTextMeasure;
+
+    private float interval1;
+    private float interval2;
+
+    public Toggle toggle1;
+    public Toggle toggle2;
+
+
+
     //creates mesh
     void CreateMesh(){
+        
+        timeTextMeasure.text = "TIME (m)";
+        timeTextAxis1.text = "0";
+        timeTextAxis2.text = (numbSeconds1 / 60f / 2f).ToString("0.00");
+        timeTextAxis3.text = (numbSeconds1 / 60f).ToString("0.00");
+
+
+        mesh.Clear();
+        numberPixelsY = resolution;
+        pixelHeight = spectrogramHeight / (numberPixelsY - 1);
+        pixelWidth = spectrogramWidth / (numberPixelsX - 1);
+        vertices = new Vector3[numberPixelsX * numberPixelsY];
+
+        historyCol1 = new Color[numberPixelsX * numberPixelsY];
+        historyCol2 = new Color[numberPixelsX * numberPixelsY];
+        colors = new Color[numberPixelsX * numberPixelsY];
+        triangles = new int[(numberPixelsX - 1) * (numberPixelsY - 1) * 6];
 
         int c1 = 0;
-        for(float y = 0; y < spectrogramHeight; y+= pixelHeight){
-            for(float x = 0; x < spectrogramWidth; x+= pixelWidth){
-                vertices[c1] = new Vector3(x,y,0);
-                colors[c1] = gradient.Evaluate(0);
-                c1++;
+        for(float y = 0; y <= pixelHeight * (numberPixelsY); y+= pixelHeight){
+            for(float x = 0; x < pixelWidth * (numberPixelsX); x+= pixelWidth){
+                //Debug.Log(c1);
+                if(c1 < vertices.Length){
+                    vertices[c1] = new Vector3(x,y,0);
+                    colors[c1] = gradient.Evaluate(0);
+                    historyCol1[c1] = gradient.Evaluate(0);
+                    historyCol2[c1] = gradient.Evaluate(0);
+                    c1++; 
+                }
             }
         }
 
@@ -56,32 +102,35 @@ public class SpectrogramGenerator : MonoBehaviour
 
             c2++;
         }
+        
         triangles = trianglesTemp.ToArray();
-
-        mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
 
     }
 
     //updates the colors
-    void UpdateColors(){
+    Color[] UpdateColorHistory(Color[] cols){
         //updates the bottom row
         for(int x = 0; x < numberPixelsX; x++){
-                colors[x] = gradient.Evaluate(gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumSpectrogram[x]))  +  Random.Range(0f, (gameLogic.sliderMaxFreqBound.value - gameLogic.sliderMinFreqBound.value) / 40));
+                cols[x] = gradient.Evaluate(gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(spectrumSpectrogram[x])));
         }
 
         //replaces each upper row with the one below it, starts with the top one
-        int c = (colors.Length - 1);
+        int c = (cols.Length - 1);
         for(int y = (numberPixelsY - 1); y >= 1; y--){
             for(int x = 0; x < numberPixelsX; x++){
                 //shifts every row up a column
-                colors[c] = colors[c - numberPixelsX];
+                cols[c] = cols[c - numberPixelsX];
                 c--;
             }
         }
 
-        mesh.colors = colors;
+        return cols;
+    }
+
+    void UpdateColors(Color[] col){
+        mesh.colors = col;
     }
 
     void Start(){
@@ -90,68 +139,133 @@ public class SpectrogramGenerator : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
 
         
-        numberOfBins = gameLogic.numberOfBinsSpectrogram;
-        soundSourcesArr = gameLogic.soundSourcesArr;
 
+        
+        numberOfBins = gameLogic.numberOfBinsSpectrogram;
         numberPixelsX = (int)(numberOfBins / gameLogic.divideFrequencyBins);
-        pixelHeight = spectrogramHeight / numberPixelsY;
-        pixelWidth = spectrogramWidth / numberPixelsX;
-        vertices = new Vector3[numberPixelsX * numberPixelsY];
-        colors = new Color[numberPixelsX * numberPixelsY];
-        triangles = new int[(numberPixelsX - 1) * (numberPixelsY - 1) * 6];
         spectrumAudioSource  = new float[numberOfBins];
         spectrumSpectrogram = new float[numberPixelsX];
         beamWidthsArr = new float[numberPixelsX];
 
+        soundSourcesArr = gameLogic.soundSourcesArr;
+
         frequencyNumberArr = gameLogic.createFreqNumArr(spectrumSpectrogram.Length);
         for(int i = 0; i < spectrumSpectrogram.Length; i++){
             spectrumSpectrogram[i] = 0f;
-            beamWidthsArr[i] = gameLogic.getBeamWidth(frequencyNumberArr[i]);
+            beamWidthsArr[i] = gameLogic.getBeamWidthAtFreq(frequencyNumberArr[i]);
         }
 
+        resPerSec1 = resolution / numbSeconds1;
+        resPerSec2 = resolution / numbSeconds2;
+        interval1 = 1f / resPerSec1;
+        interval2 = 1f / resPerSec2;
 
-        CreateMesh();     
+        CreateMesh(); 
+
+        toggle1.onValueChanged.AddListener(OnToggle1ValueChanged);
+        toggle2.onValueChanged.AddListener(OnToggle2ValueChanged);
+        
+
+        StartCoroutine(UpdateScreenOne());
+        StartCoroutine(UpdateScreenTwo());
+
+        
+
+        //numbSecSlider.onValueChanged.AddListener(OnSliderValueChanged);
+
+        //timer = interval;
+
     }
 
+    /*
+    private void OnSliderValueChanged(float value)
+    {
+        isPaused = true;
+        numbSeconds = (float)numbSecSlider.value;
+        CreateMesh(); 
+        isPaused = false;
+    }*/
 
-    void FixedUpdate(){
-        soundSourcesArr = gameLogic.soundSourcesArr;
+    private void OnToggle1ValueChanged(bool isOn)
+    {
+        if (isOn){
+            timeTextMeasure.text = "TIME (m)";
+            timeTextAxis1.text = "0";
+            timeTextAxis2.text = (numbSeconds1 / 60f / 2f).ToString("0.00");
+            timeTextAxis3.text = (numbSeconds1 / 60f).ToString("0.00");
+            toggle2.isOn = false;
+        }
+        if((isOn == false) & (toggle2.isOn == false)){
+            toggle1.isOn = true;
+        }
+    }
 
-        for(int i = 0; i < spectrumSpectrogram.Length; i++){
+    private void OnToggle2ValueChanged(bool isOn)
+    {
+        if (isOn){
+            timeTextMeasure.text = "TIME (m)";
+            timeTextAxis1.text = "0";
+            timeTextAxis2.text = (numbSeconds2 / 60f / 2f).ToString("0.00");
+            timeTextAxis3.text = (numbSeconds2 / 60f).ToString("0.00");
+            toggle1.isOn = false;
+        }
+        if((isOn == false) & (toggle1.isOn == false)){
+            toggle2.isOn = true;
+        }
+    }
+
+    IEnumerator UpdateScreenOne(){
+        while(true){
+            UpdateSpectrum();
+            historyCol1 = UpdateColorHistory(historyCol1);
+            if(toggle1.isOn == true){
+                UpdateColors(historyCol1);
+            }
+            yield return new WaitForSeconds(interval1);
+        }
+    }
+
+    IEnumerator UpdateScreenTwo(){
+        while(true){
+
+            historyCol2 = UpdateColorHistory(historyCol2);
+            if(toggle2.isOn == true){
+                UpdateColors(historyCol2);
+            }
+            yield return new WaitForSeconds(interval2);
+        }
+    }
+
+    private void UpdateSpectrum(){
+        for (int i = 0; i < spectrumSpectrogram.Length; i++){
             spectrumSpectrogram[i] = 0f;
         }
 
         //Go through each sound source in the scene
-        for(int i = 0; i < soundSourcesArr.Length; i++){
-
+        for (int i = 0; i < soundSourcesArr.Length; i++){
             //and get its spectrum data
             soundSourcesArr[i].GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
             float soundRotRelative = gameLogic.getRelativeRotationToBeam(soundSourcesArr[i]);
-
-            for(int j = 0; j < spectrumSpectrogram.Length; j++){
-                
+            for (int j = 0; j < spectrumSpectrogram.Length; j++){
                 //binary mask
-                
-                if( (soundRotRelative < (bearingOverlay.getScanningWidth() /2) ||  ( soundRotRelative < (beamWidthsArr[j] * Mathf.Rad2Deg / 2)) )){
-
-                    spectrumSpectrogram[j] += spectrumAudioSource[j];  
-                
+                if ((soundRotRelative < (gameLogic.getScanningWidth() / 2) || (soundRotRelative < (beamWidthsArr[j] * Mathf.Rad2Deg / 2)))){
+                    spectrumSpectrogram[j] += spectrumAudioSource[j];
                 }
-                
-
-                
                 //mask using the formula given by the sound intensity
-
                 /*
                 if(soundRotRelative < (bearingOverlay.getScanningWidth() /2 )){
                     spectrumSpectrogram[j] += spectrumAudioSource[j] * gameLogic.getSoundIntensity(soundRotRelative , frequencyNumberArr[i]); 
                 }
                 */
+            }
+
+            float scalingFactor = 0.2f;
+            noise.GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
+            for (int j = 0; j < spectrumSpectrogram.Length; j++){
+                spectrumSpectrogram[j] += (spectrumAudioSource[j] * scalingFactor * gameLogic.beamWidth.value * 2);
 
             }
             
         }
-
-        UpdateColors();
     }
 }
