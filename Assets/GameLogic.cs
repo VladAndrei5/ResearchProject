@@ -5,12 +5,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Audio;
+using Random=UnityEngine.Random;
 
 public class GameLogic : MonoBehaviour
 {
     // Start is called before the first frame update
 
     
+    public GameObject PrefabWTracker;
+    public GameObject PrefabBTracker;
+    public GameObject PrefabAudioSource;
+    public GameObject ParentWTrackers;
+    public GameObject ParentBTrackers;
+    public GameObject ParentAudioSources;
     public GameObject beamVector;
     public GameObject[] soundSourcesArr;
 
@@ -210,9 +217,47 @@ public class GameLogic : MonoBehaviour
     }
 
     void Start(){
+
+
+        int numberOfPrefabs = 10; 
+        Vector3 localPosition = Vector3.zero; // Local position of the spawned prefabs relative to the parentObject
+        Vector3 localRotation = Vector3.zero; // Local rotation of the spawned prefabs relative to the parentObject
+        Vector3 localScale = Vector3.one;
+
+
+        for (int i = 0; i < numberOfPrefabs; i++)
+        {
+            localPosition = new Vector3(Random.Range(-50f, 50f) , Random.Range(-50f, 50f), 0f);
+
+            GameObject newPrefab = Instantiate(PrefabAudioSource, ParentAudioSources.transform);
+            newPrefab.transform.localPosition = localPosition;
+
+            localPosition = Vector3.zero;
+            localScale = new Vector3(4.5f, 4.5f, 1f);
+
+
+            newPrefab = Instantiate(PrefabWTracker, ParentWTrackers.transform);
+            newPrefab.transform.localPosition = localPosition;
+            newPrefab.transform.localScale = localScale;
+
+            localPosition = new Vector3(0f , 52.83f, 0f);
+            localScale = new Vector3(6f, 4f, 1f);
+            localRotation = new Vector3(0f, 0f, 180f);
+
+
+            newPrefab = Instantiate(PrefabBTracker, ParentBTrackers.transform);
+            newPrefab.transform.localPosition = localPosition;
+            newPrefab.transform.localRotation = Quaternion.Euler(localRotation);
+            newPrefab.transform.localScale = localScale;
+
+        }
+
+
+
+
+
         GameObject[] foundObjects = GameObject.FindGameObjectsWithTag("AudioSourceObj");
         soundSourcesArr = new GameObject[foundObjects.Length];
-
         // Copy found objects to the gameObjectsArray
         for (int i = 0; i < foundObjects.Length; i++){
             soundSourcesArr[i] = foundObjects[i];
@@ -230,7 +275,9 @@ public class GameLogic : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-
+        if(beamWidth.value < 0.005f){
+            beamWidth.value = 0.005f;
+        }
 
         float lowPassCutoffValue = 10000;
         float highPassCutoffValue = 10;
