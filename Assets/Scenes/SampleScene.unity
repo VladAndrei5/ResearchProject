@@ -692,11 +692,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 203102616}
   m_CullTransparentMesh: 1
---- !u!1 &208892359 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6901066930237427963, guid: 731e6ecec04a7264ea0001efd505423b, type: 3}
-  m_PrefabInstance: {fileID: 6029508002063585684}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &208892360 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8648508483867569793, guid: 731e6ecec04a7264ea0001efd505423b, type: 3}
@@ -1764,13 +1759,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dcccc0f6183442c5823455bd1892263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PrefabWTracker: {fileID: 208892359}
-  PrefabBTracker: {fileID: 707718551}
+  PrefabWindowTracker: {fileID: 6901066930237427963, guid: 731e6ecec04a7264ea0001efd505423b, type: 3}
+  PrefabBearingTracker: {fileID: 2714028954598441527, guid: 02091b2b854fb594a84ba277d68868d0, type: 3}
   PrefabAudioSource: {fileID: 8331744209946074213, guid: 92b691e7940159c409289928f0054966, type: 3}
-  ParentWTrackers: {fileID: 1957789618}
-  ParentBTrackers: {fileID: 44093222}
+  ParentWindowTrackers: {fileID: 0}
+  ParentBearingTrackers: {fileID: 64799075}
   ParentAudioSources: {fileID: 1391017322}
-  beamVector: {fileID: 933299377}
   soundSourcesArr: []
   noise: {fileID: 761294733}
   numberOfBinsSpectrogram: 512
@@ -1782,7 +1776,7 @@ MonoBehaviour:
   lengthSensor: 100
   speedOfSound: 1400
   beamRotation: 0
-  beamWidthsArr: []
+  freqBeamWidthsArr: []
   frequencyNumberArr: []
   divideFrequencyBins: 2
 --- !u!4 &525591761
@@ -1845,8 +1839,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2026db5a1505224b8b063eeb7cd1038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wTrackers: []
-  bTrackers: []
+  mapTrackers: []
+  bearingTrackers: []
   gameLogic: {fileID: 525591760}
 --- !u!1 &564364425
 GameObject:
@@ -2564,11 +2558,6 @@ MonoBehaviour:
   sliderCenter: {fileID: 2046516887}
   rot1: {fileID: 1114931853}
   rot2: {fileID: 1702154194}
---- !u!1 &707718551 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2714028954598441527, guid: 02091b2b854fb594a84ba277d68868d0, type: 3}
-  m_PrefabInstance: {fileID: 7516957545814315225}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &707718553 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2944797475052551, guid: 02091b2b854fb594a84ba277d68868d0, type: 3}

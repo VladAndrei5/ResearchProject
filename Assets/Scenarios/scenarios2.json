@@ -1,0 +1,83 @@
+{
+  "scenarios": [
+    {
+      "id": "scenario1",
+      "countdown": 50,
+      "AIType": "neutral",
+      "numberEntities": 3,
+      "entities": [
+        {
+          "id": "entity1",
+          "audio": "boat_row",
+          "realClass": "ship",
+          "movement" : {
+            "time" : [0, 10, 15],
+            "x" : [5, 20, 15],
+            "y" : [5, 20, 15]
+          },
+          "AI" : {
+            "time" : [0, 5, 10],
+            "classType" : ["ship", "pirate", "pirate"],
+            "confidence" : [90, 80, 60]
+          }
+        },
+        {
+          "id": "entity2",
+          "audio": "CipTest",
+          "realClass": "mammal",
+          "movement" : {
+            "time" : [0, 10, 15],
+            "x" : [-5, -20, -15],
+            "y" : [-5, -20, -15]
+          },
+          "AI" : {
+            "time" : [0, 7, 10],
+            "classType" : ["ship", "mammal", "ship"],
+            "confidence" : [90, 80, 60]
+          }
+        },
+        {
+          "id": "entity3",
+          "audio": "CipTest",
+          "realClass": "mammal",
+          "movement" : {
+            "time" : [0, 10, 15],
+            "x" : [-5, -20, -15],
+            "y" : [-5, -20, -15]
+          },
+          "AI" : {
+            "time" : [0, 7, 10],
+            "classType" : ["ship", "mammal", "ship"],
+            "confidence" : [90, 80, 60]
+          }
+          
+        }
+      ]
+    },
+
+    {
+      "id": "scenario2",
+      "countdown": 15,
+      "AIType": "neutral",
+      "numberEntities": 1,
+      "entities": [
+        {
+          "id": "entity1",
+          "audio": "CipTest",
+          "realClass": "ship",
+          "movement" : {
+            "time" : [0, 10, 15],
+            "x" : [5, 20, 15],
+            "y" : [5, 20, 15]
+          },
+          "AI" : {
+            "time" : [0, 5, 10],
+            "classType" : ["pirate", "pirate", "pirate"],
+            "confidence" : [90, 80, 60]
+          }
+        }
+      ]
+    }
+
+  ]
+}
