@@ -1802,8 +1802,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 284677542}
-  - component: {fileID: 284677544}
-  - component: {fileID: 284677545}
   - component: {fileID: 284677546}
   m_Layer: 0
   m_Name: UI
@@ -1827,40 +1825,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &284677544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 284677541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b61786e2637370f4d924eb81b03ec7f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &284677545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 284677541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbb8899c1bf5fd04d8e17e2a64257133, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nextScenarioButton: {fileID: 1979913496}
-  endScreenButton: {fileID: 793811997}
-  totalTime: 0
-  timerText: {fileID: 468591197}
-  spotlight1: {fileID: 241015793}
-  spotlight2: {fileID: 693844742}
-  persistentData: {fileID: 0}
-  levelManager: {fileID: 0}
-  nextLevelPanel: {fileID: 1569713599}
-  endScreenPanel: {fileID: 8364550}
 --- !u!114 &284677546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2461,6 +2425,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numberOfBinsSpectrogram: 512
   numberOfBinsBearing: 512
+  gradient:
+    serializedVersion: 2
+    key0: {r: 0.35571605, g: 0.20799215, b: 0.7735849, a: 1}
+    key1: {r: 0.6792453, g: 0.556746, b: 0.31719473, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  utilities: {fileID: 1052755790}
 --- !u!4 &369461039
 Transform:
   m_ObjectHideFlags: 0
@@ -3254,6 +3249,61 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 491144586}
   m_CullTransparentMesh: 1
+--- !u!1 &493780529
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 493780531}
+  - component: {fileID: 493780530}
+  m_Layer: 0
+  m_Name: Timer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &493780530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493780529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbb8899c1bf5fd04d8e17e2a64257133, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextScenarioButton: {fileID: 1979913496}
+  endScreenButton: {fileID: 793811997}
+  totalTime: 0
+  timerText: {fileID: 468591197}
+  spotlight1: {fileID: 693844742}
+  spotlight2: {fileID: 241015793}
+  persistentData: {fileID: 0}
+  levelManager: {fileID: 0}
+  nextLevelPanel: {fileID: 1569713599}
+  endScreenPanel: {fileID: 8364550}
+  test: 0
+--- !u!4 &493780531
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493780529}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &495854758
 GameObject:
   m_ObjectHideFlags: 0
@@ -5523,7 +5573,7 @@ GameObject:
   - component: {fileID: 793811998}
   - component: {fileID: 793811997}
   m_Layer: 5
-  m_Name: Button
+  m_Name: EndScreenButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7769,9 +7819,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1252456412}
-  - component: {fileID: 1252456415}
   - component: {fileID: 1252456414}
   - component: {fileID: 1252456413}
+  - component: {fileID: 1252456415}
   m_Layer: 0
   m_Name: SpectrogramGenerator
   m_TagString: Untagged
@@ -7853,9 +7903,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1252456411}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22120ba384381974599263f0cbd609f3, type: 3}
+  m_Script: {fileID: 11500000, guid: 1562ed97200a39b47bbcde9e1ea8ba9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spectrogramHeight: 100
+  spectrogramWidth: 100
+  resolutionPixelsHeight: 256
+  numbSecondDisplayed: 16
+  entityManager: {fileID: 626933008}
+  utilities: {fileID: 1052755790}
+  generator: {fileID: 369461038}
 --- !u!1 &1271195085
 GameObject:
   m_ObjectHideFlags: 0
@@ -10648,7 +10705,7 @@ GameObject:
   - component: {fileID: 1979913497}
   - component: {fileID: 1979913496}
   m_Layer: 5
-  m_Name: Button
+  m_Name: NextButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11286,3 +11343,4 @@ SceneRoots:
   - {fileID: 231848792}
   - {fileID: 1052755789}
   - {fileID: 369461039}
+  - {fileID: 493780531}

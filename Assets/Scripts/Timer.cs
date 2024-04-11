@@ -17,6 +17,7 @@ public class Timer : MonoBehaviour
     public GameObject nextLevelPanel;
 
     public GameObject endScreenPanel;
+    public int test;
 
     public void SetPanelInteractibility(GameObject panel, bool visible){
         panel.SetActive(visible);

@@ -10,27 +10,34 @@ using Random=UnityEngine.Random;
 [RequireComponent(typeof(MeshFilter))]
 public class Spectrogram : MonoBehaviour
 {
+    public float spectrogramHeight;
+    public float spectrogramWidth;
+    public int resolutionPixelsHeight;
+    public int numbSecondDisplayed;
+    private GameObject[] soundSourcesArr;
+    public EntityManager entityManager;
+    public Utilities utilities;
+    public Generator generator;
+
+
+
 
     void Start(){
         //we create a mesh
-        mesh = new Mesh();
+        Mesh meshSpectrogram = new Mesh();
 
         //we need this line for large meshes
-        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-
-        GetComponent<MeshFilter>().mesh = mesh;
+        meshSpectrogram.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
         //the number of rows (lines) of pixels which will be updated in a second
-        resPerSec1 = resolution / numbSeconds1;
-        resPerSec2 = resolution / numbSeconds2;
+        float resPerSec = resolutionPixelsHeight / numbSecondDisplayed;
 
         // the interval at each a line is rendered
-        interval1 = 1f / resPerSec1;
-        interval2 = 1f / resPerSec2;
+        float interval = 1f / resPerSec;
 
         //the number of bins the spectrum will have (has to be a power of 2)
-        numberOfBins = generator.numberOfBinsSpectrogram;
-        spectrumAudioSource  = new float[numberOfBins];
+        int numberOfBins = 512;
+        float[] spectrumAudioSource  = new float[numberOfBins];
 
         //the number of pixels horizontally and vertically
         // for the x axis, each pixel will correspond to a bin
@@ -39,38 +46,26 @@ public class Spectrogram : MonoBehaviour
         // I assing the number of pixels horizontally to the number of bins devided by some number
         // in this case 2, but this can be done in any way. We effectively "shave" off the last 10,000 bins
         // since we dont need them
-        numberPixelsX = (int)(numberOfBins / utilities.divideFrequencyBins);
-        numberPixelsY = resolution;
+        int numberPixelsX = (int)(numberOfBins / utilities.divideFrequencyBins);
+        int numberPixelsY = resolutionPixelsHeight;
 
         //we create an array which will hold the intensity values of each bin corresponding to the number of pixels
         //this does not hold the colour of the pixel
-        pixelsLineSpectrogram = new float[numberPixelsX];
+        float[] pixelsLineSpectrogram = new float[numberPixelsX];
         //beamWidthsArr = new float[numberPixelsX];
 
         //we get the list of sound sources
         soundSourcesArr = entityManager.getSoundSourcesArray();
 
         //we create the array which holds the "label" aka the frequency of each bin corresponding to the line of pixels
-        frequencyNumberArr = utilities.createFreqArray(pixelsLineSpectrogram.Length);
+        //frequencyNumberArr = utilities.createFreqArray(pixelsLineSpectrogram.Length);
 
-        for(int i = 0; i < pixelsLineSpectrogram.Length; i++){
-            pixelsLineSpectrogram[i] = 0f;
-            //beamWidthsArr[i] = utilities.getBeamWidthAtFreq(frequencyNumberArr[i]);
-        }
-
-        
-
-        CreateMesh(); 
-
-        toggle1.onValueChanged.AddListener(OnToggle1ValueChanged);
-        toggle2.onValueChanged.AddListener(OnToggle2ValueChanged);
-
-        StartCoroutine(DrawColors());
-        StartCoroutine(UpdateScreenTwo());
-
+        meshSpectrogram = generator.CreateMesh(meshSpectrogram, spectrogramHeight, spectrogramWidth, numberPixelsX, numberPixelsY); 
+        GetComponent<MeshFilter>().mesh = meshSpectrogram;
+        //StartCoroutine(DrawColors());
     }
 
-    
+    /*
     IEnumerator DrawColors(float interval, Color[] colors){
         while(true){
             pixelsLineSpectrogram = DrawLine();
@@ -94,12 +89,6 @@ public class Spectrogram : MonoBehaviour
                 if ((soundRotRelative < (gameLogic.getSonarBeamWidth() / 2) || (soundRotRelative < (beamWidthsArr[j] * Mathf.Rad2Deg / 2)))){
                     pixelsLineSpectrogram[j] += spectrumAudioSource[j];
                 }
-                //mask using the formula given by the sound intensity
-                /*
-                if(soundRotRelative < (bearingOverlay.getSonarBeamWidth() /2 )){
-                    spectrumSpectrogram[j] += spectrumAudioSource[j] * gameLogic.getSoundIntensity(soundRotRelative , frequencyNumberArr[i]); 
-                }
-                */
             }
 
             float scalingFactor = 0.2f;
@@ -112,5 +101,6 @@ public class Spectrogram : MonoBehaviour
 
         return pixelsLineSpectrogram;
     }
+    */
     
 }

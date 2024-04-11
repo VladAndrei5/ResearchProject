@@ -8,8 +8,9 @@ public class Generator : MonoBehaviour
     private int[] triangles;
     private List<int> trianglesTemp = new List<int>();
 
-    public int numberOfBinsSpectrogram = 512;
-    public int numberOfBinsBearing = 512;
+    public Gradient gradient;
+
+    public Utilities utilities;
 
 
     void Awake(){
@@ -20,12 +21,12 @@ public class Generator : MonoBehaviour
 
     //function to create a mesh by specifying the height and width of the plot, and its resolution
     //I followed Brackeys tutorial on : https://www.youtube.com/watch?v=eJEpeUH1EMg
-    public Mesh CreateMesh(Mesh mesh, float Height, float Width, int numberPixelsX, int numberPixelsY ){
+    public Mesh CreateMesh(Mesh mesh, float height, float width, int numberPixelsX, int numberPixelsY ){
 
         //assign the distance between pixels (the name is slightly unaccurate)
         //both horizontally and vertically
-        float pixelHeight = Height / (numberPixelsY - 1);
-        float pixelWidth = Width / (numberPixelsX - 1);
+        float pixelHeight = height / (numberPixelsY - 1);
+        float pixelWidth = width / (numberPixelsX - 1);
 
         //create array to hold the triangles of the mesh
         triangles = new int[(numberPixelsX - 1) * (numberPixelsY - 1) * 6];
@@ -67,26 +68,29 @@ public class Generator : MonoBehaviour
 
     //it update the mesh's vertex colors with a given array of colors
     //effectively updating the plot the user will see
-    void UpdateScreen(Mesh mesh, Color[] col){
+    /*
+    public Mesh UpdateScreen(Mesh mesh, Color[] col){
         mesh.colors = col;
         return mesh;
     }
+    */
 
     //it updates the array of colors used by the plot
     //by inserting the updated line of pixels at the top
-    Color[] UpdateColorHistory(Color[] colors, float[] linePixels){
+    /*
+    public Color[] UpdateColorArray(Color[] colors, float[] linePixels, int numberPixelsY, int numberPixelsX){
         //updates the bottom row
-        for(int x = 0; x < linePixels; x++){
-            colors[x] = gradient.Evaluate(gameLogic.normaliseSoundDecebels(gameLogic.convertToDecebels(linePixels[x])));
+        for(int x = 0; x < numberPixelsX x++){
+            colors[x] = gradient.Evaluate(utilities.normaliseSoundDecebels(utilities.convertToDecebels(linePixels[x])));
         }
 
         //replaces each upper row with the one below it, starts with the top one
         //efectively shifts the plot upwards
         int c = (colors.Length - 1);
         for(int y = (numberPixelsY - 1); y >= 1; y--){
-            for(int x = 0; x < linePixels; x++){
+            for(int x = 0; x < numberPixelsX; x++){
                 //shifts every row up a column
-                colors[c] = colors[c - linePixels];
+                colors[c] = colors[c - numberPixelsX];
                 c--;
             }
         }
@@ -94,4 +98,5 @@ public class Generator : MonoBehaviour
         //return the new array of colors
         return colors;
     }
+    */
 }
