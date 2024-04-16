@@ -17,7 +17,7 @@ public class LedgerUI : MonoBehaviour
     public Button buttonOverrideAI;
     public Toggle shipToggle;
     public Toggle pirateToggle;
-    public Toggle mammalToggle;
+    public Toggle seaLifeToggle;
     public Toggle AIEstimationToggle;
 
     public BearingTrackerBehaviour selectedTracker;
@@ -34,8 +34,8 @@ public class LedgerUI : MonoBehaviour
         isChosenByUser = true;
     }
 
-    private void mammalToggleChanged(bool isOn){
-        selectedClass = "mammal";
+    private void seaLifeToggleChanged(bool isOn){
+        selectedClass = "seaLife";
         isChosenByUser = true;
     }
 
@@ -50,7 +50,7 @@ public class LedgerUI : MonoBehaviour
         buttonOverrideAI.onClick.AddListener(ButtonOverrideClicked);
         shipToggle.onValueChanged.AddListener(shipToggleChanged);
         pirateToggle.onValueChanged.AddListener(pirateToggleChanged);
-        mammalToggle.onValueChanged.AddListener(mammalToggleChanged);
+        seaLifeToggle.onValueChanged.AddListener(seaLifeToggleChanged);
         AIEstimationToggle.onValueChanged.AddListener(AIEstimationToggleChanged);
         textClass.text = "";
         textConfidence.text = "";

@@ -20,7 +20,7 @@ public class EntityManager : MonoBehaviour
     public GameObject ParentMapTrackers;
     public GameObject ParentBearingTrackers;
     public GameObject ParentAudioSources;
-    public GameObject audioSource;
+    private GameObject audioSource;
     
     //public GameObject[] soundSourcesArray;
     public PersistentData persistentData;
@@ -44,27 +44,28 @@ public class EntityManager : MonoBehaviour
     }
 
     //spawns all the audio sources
-    private void SpawnPrefabsAudioSources(){
+    private GameObject SpawnPrefabsAudioSource(string audioFile, string id, Movement movement){
         Vector3 localPosition = Vector3.zero; // Local position of the spawned prefabs relative to the parentObject
         Vector3 localRotation = Vector3.zero; // Local rotation of the spawned prefabs relative to the parentObject
         Vector3 localScale = Vector3.one;
 
         //Initalise Sound Source Object
-        audioSource = Instantiate(PrefabAudioSource, ParentAudioSources.transform);
+        GameObject audioSource = Instantiate(PrefabAudioSource, ParentAudioSources.transform);
         audioSource.transform.localPosition = localPosition;
         //Initalise its behaviour
         audioSource.GetComponent<SoundSourceBehaviour>().InitaliseBehaviour(audioFile, id, movement);
+        return audioSource;
     }
 
     //spawns all the bearing trackers
-    private void SpawnPrefabsBearingTrackers(){
+    private void SpawnPrefabsBearingTracker(GameObject audioSource){
         Vector3 localPosition = Vector3.zero; // Local position of the spawned prefabs relative to the parentObject
         Vector3 localRotation = Vector3.zero; // Local rotation of the spawned prefabs relative to the parentObject
         Vector3 localScale = Vector3.one;
 
         //change this back to accurate
-        localPosition = new Vector3(Random.Range(-50f, 50), 52.83f, 0f);
-        localScale = new Vector3(16f, 16f, 1f);
+        localPosition = new Vector3(Random.Range(-50f, 50), 56.5f, 0f);
+        localScale = new Vector3(7.5f, 7.5f, 1f);
         localRotation = new Vector3(0f, 0f, 0f);
 
         //Initalise bearing tracker
@@ -112,11 +113,10 @@ public class EntityManager : MonoBehaviour
             movement = scenario.entities[i].movement;
             behaviourAI = scenario.entities[i].AI;
             //spawns all the prefabs;
-            SpawnPrefabsAudioSources();
+            GameObject audioSource = SpawnPrefabsAudioSource(audioFile, id, movement);
             //SpawnPrefabsMapTrackers();
-            SpawnPrefabsBearingTrackers();
+            SpawnPrefabsBearingTracker(audioSource);
         }
-
         //after creating the objects, add them to their respective lists
         foundObjects = GameObject.FindGameObjectsWithTag("AudioSourceObj");
         audioSourcesObjArray = new GameObject[foundObjects.Length];

@@ -68,5 +68,17 @@ public class SoundSourceBehaviour : MonoBehaviour
             // Ensure the GameObject reaches the exact destination at the end
         }        
     }
+
+    public void setPosition(Vector3 newPos){
+        transform.position = newPos;
+    }
+
+    public Vector3 getPosition(){
+        return transform.position;
+    }
+
+    public GameObject getGameObject(){
+        return gameObject;
+    }
     
 }

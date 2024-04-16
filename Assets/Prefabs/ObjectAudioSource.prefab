@@ -48,7 +48,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c97d995f54e9a114aa6a9533a4714689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioFile: 
+  id: 
+  movement:
+    time: []
+    x: []
+    y: []
+  timer: 0
   destination: {x: 0, y: 0}
+  initialPosition: {x: 0, y: 0}
   timeToReachDestination: 0
 --- !u!82 &3993541827669681662
 AudioSource:
@@ -161,7 +169,7 @@ AudioLowPassFilter:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.5940882
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -179,7 +187,7 @@ AudioHighPassFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8331744209946074213}
   m_Enabled: 1
-  m_CutoffFrequency: 5000
+  m_CutoffFrequency: 10
   m_HighpassResonanceQ: 1
 --- !u!212 &4635904401701749994
 SpriteRenderer:

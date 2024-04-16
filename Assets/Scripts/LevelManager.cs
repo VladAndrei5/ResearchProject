@@ -8,7 +8,7 @@ public class LevelManager : MonoBehaviour
 
     public PersistentData persistentData;
     public Scenario currentScenarioData;
-    public EntityManager entityManager;
+    //public EntityManager entityManager;
 
     void Awake()
     {

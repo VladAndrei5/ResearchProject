@@ -12,6 +12,8 @@ TagManager:
   - PersistentData
   - LevelManager
   - UI
+  - LedgerUI
+  - Utilities
   layers:
   - Default
   - TransparentFX

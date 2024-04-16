@@ -22,7 +22,15 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public int counter;
     public Color userColor;
     public Color AIColor;
+
+
+    //references to classes
     public LedgerUI ledgerUI;
+    public Utilities utilities;
+
+
+    [SerializeField]
+    public float[] spectrumAudioSource;
 
     //creates an outline around the selected tracker
     public void ToggleTrackerOutline(bool isEnabled){
@@ -74,6 +82,10 @@ public class BearingTrackerBehaviour : MonoBehaviour
     //initialises the tracker when it is first spawned in
     public void InitaliseBehaviour(string realClass, AI behaviourAI, SoundSourceBehaviour audioSource){
 
+        //
+        GameObject obj = GameObject.FindWithTag("Utilities");
+        utilities = obj.GetComponent<Utilities>();
+
         //these variables never change
         this.behaviourAI = behaviourAI;
         this.realClass = realClass;
@@ -86,14 +98,15 @@ public class BearingTrackerBehaviour : MonoBehaviour
         //set up sprite renderer and colours of trackers
         spriteRenderer = GetComponent<SpriteRenderer>();
         userColor = Color.yellow;
-        AIColor = Color.black;
+        AIColor = Color.white;
 
         //create ledger reference
-        GameObject ledgerOBJ = GameObject.FindWithTag("UI");
+        GameObject ledgerOBJ = GameObject.FindWithTag("LedgerUI");
         ledgerUI = ledgerOBJ.GetComponent<LedgerUI>();
 
         counter = 0;
         UpdateAIEstimation();
+        StartCoroutine(UpdateVisibility(soundSourcePair.getGameObject()));
     }
     void Start()
     {
@@ -101,6 +114,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
             timer = 0f;
             counter = 0;
         }
+
     }
     
     void Update()
@@ -122,8 +136,41 @@ public class BearingTrackerBehaviour : MonoBehaviour
             }
         }
         StartCoroutine(UpdateTrackBehaviour());
+        UpdatePosition(soundSourcePair.getGameObject());
     }
     
+    private IEnumerator UpdateVisibility(GameObject soundSource){
+        
+        spectrumAudioSource = new float[64];
+        while(true){
+            //Debug.Log("Gello");
+            soundSource.GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
+            float highestApmlitude = 0f;
+            for (int j = 0; j < spectrumAudioSource.Length / 2; j++){
+                if(highestApmlitude < spectrumAudioSource[j]){
+                    highestApmlitude =spectrumAudioSource[j];
+                    spectrumAudioSource[j] = 0f;
+                }
+            }
+            //Debug.Log(highestApmlitude);
+            //Debug.Log(utilities.normaliseSoundDecebels(utilities.convertToDecebels(highestApmlitude)));
+            if( utilities.normaliseSoundDecebels(utilities.convertToDecebels(highestApmlitude))  < 0.24){
+                GetComponent<SpriteRenderer>().enabled = false;
+            }
+            else{
+                GetComponent<SpriteRenderer>().enabled = true;
+            }
+            yield return null;
+        }
+    }
+    
+    public void UpdatePosition(GameObject soundSource){
+        float soundRot = utilities.getSoundSourceAngle(soundSource);
+        soundRot = utilities.Remap(soundRot, -180f, 180f, -50f, 50f);
+
+        Vector3 currentPosition = transform.position;
+        transform.localPosition = new Vector3(soundRot * -1f, currentPosition.y, currentPosition.z);
+    }
     
     //the tracker continues to update new estimations when the time is correct
     private IEnumerator UpdateTrackBehaviour()

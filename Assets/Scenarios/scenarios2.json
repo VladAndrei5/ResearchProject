@@ -2,7 +2,7 @@
   "scenarios": [
     {
       "id": "scenario1",
-      "countdown": 50,
+      "countdown": 200,
       "AIType": "neutral",
       "numberEntities": 3,
       "entities": [
@@ -11,43 +11,43 @@
           "audio": "boat_row",
           "realClass": "ship",
           "movement" : {
-            "time" : [0, 10, 15],
-            "x" : [5, 20, 15],
-            "y" : [5, 20, 15]
+            "time" : [0, 10, 15, 24],
+            "x" : [5, 6, 23, 15],
+            "y" : [5, 15, 10, -10]
           },
           "AI" : {
-            "time" : [0, 5, 10],
-            "classType" : ["ship", "pirate", "pirate"],
-            "confidence" : [90, 80, 60]
+            "time" : [0, 10, 20,30],
+            "classType" : ["ship", "pirate", "pirate","pirate"],
+            "confidence" : [90, 80, 60,40]
           }
         },
         {
           "id": "entity2",
           "audio": "CipTest",
-          "realClass": "mammal",
+          "realClass": "seaLife",
           "movement" : {
-            "time" : [0, 10, 15],
+            "time" : [0, 25, 30],
             "x" : [-5, -20, -15],
-            "y" : [-5, -20, -15]
+            "y" : [-9, -15, 10]
           },
           "AI" : {
             "time" : [0, 7, 10],
-            "classType" : ["ship", "mammal", "ship"],
+            "classType" : ["ship", "seaLife", "ship"],
             "confidence" : [90, 80, 60]
           }
         },
         {
           "id": "entity3",
           "audio": "CipTest",
-          "realClass": "mammal",
+          "realClass": "seaLife",
           "movement" : {
             "time" : [0, 10, 15],
-            "x" : [-5, -20, -15],
-            "y" : [-5, -20, -15]
+            "x" : [-5, -7, -52],
+            "y" : [-5, -7, 25]
           },
           "AI" : {
             "time" : [0, 7, 10],
-            "classType" : ["ship", "mammal", "ship"],
+            "classType" : ["ship", "seaLife", "ship"],
             "confidence" : [90, 80, 60]
           }
           
@@ -57,7 +57,7 @@
 
     {
       "id": "scenario2",
-      "countdown": 15,
+      "countdown": 25,
       "AIType": "neutral",
       "numberEntities": 1,
       "entities": [
