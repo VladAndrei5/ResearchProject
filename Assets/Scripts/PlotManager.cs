@@ -21,9 +21,9 @@ public class PlotManager : MonoBehaviour
     //This whould only bee needed for the spectrogram type of plots however
 
     //specifications for each plot
-    private float[] heights = {100, 100, 100, 100};
-    private float[] widths = {100, 100, 100, 100};
-    private int[] resolutionPixelsY = {1024, 1024, 512, 512};
+    private float[] heights = {100, 100, 100};
+    private float[] widths = {100, 100, 100};
+    private int[] resolutionPixelsY = {256, 720, 360};
 
     //keep in mind that for spectrograms,
     // the number of pixels in the X axis should be smaller or equal to the number of bins
@@ -31,15 +31,15 @@ public class PlotManager : MonoBehaviour
     //are important. It has to be changed perhaps, but for now there should be put care if
     //they are to be modified since some classess and methods access the positions directly
     //And the number of seconds should be less than hald of the number of pixels in the Y dimension
-    private int[] resolutionPixelsX = {512, 512, 512, 512};
-    private int[] numbSecondsDisplayed = {30, 240, 30, 240};
-    private string[] plotTypes = {"spectrogram", "spectrogram", "bearing",  "bearing"};
+    private int[] resolutionPixelsX = {256, 360, 360};
+    private int[] numbSecondsDisplayed = {5, 60, 240};
+    private string[] plotTypes = {"spectrogram", "bearing",  "bearing"};
 
 
     //---------------------------------------------------------
 
     //number of bins used to gather spectrum data for each plot;
-    private int[] numberOfBins = {1024, 1024, 1024, 1024};
+    private int[] numberOfBins = {512, 512, 512, 512};
 
     //refrences to classes
     public Utilities utilities;
@@ -111,14 +111,46 @@ public class PlotManager : MonoBehaviour
             }
             */
 
+            //debugging
+            if(i == 0){
+                Debug.Log("rot " + rot);
+                Debug.Log("smallest: " + (frequenciesDetectableRange[0] * Mathf.Rad2Deg / 2));
+            }
+
             if ((rot < (userControls.getSonarBeamWidth() / 2))){
                     highPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexLowBound(arrayLen));
                     lowPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexUpperBound(arrayLen));
                     //Debug.Log(highPassCutoffValue);
                     //Debug.Log(lowPassCutoffValue);
             }
-            
-        
+            else{
+                //tried to optimise this to reduce the computation
+                //we are searching for frequencies which ca be picked up in case the user defined beam did not manage to
+                //if we found something we set the flag to true
+                //we start with lower frequencies and move on to higher ones, when we encounter a frequency which we cannot pick up
+                //we stop the search and check if we found something previously, if we did we allocate the cut off value as the previous frequency
+                bool found = false;
+                for (int j = 0; j < frequencyNumberArr.Length; j++){            
+                    if ((rot < (frequenciesDetectableRange[j] * Mathf.Rad2Deg / 2))){
+                        found = true;
+                    }
+                    else{
+                        if(found){
+                            found = false;
+                            Debug.Log("found" + j);
+                            Debug.Log(utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexUpperBound(arrayLen)));
+                            //check if the frequency is lower than the limit defined by the user, in which case the limit takes over, else the physics
+                            if(frequencyNumberArr[j - 1] < utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexLowBound(arrayLen))){
+                                lowPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexLowBound(arrayLen));
+                            }
+                            else{
+                                lowPassCutoffValue = frequencyNumberArr[j - 1];
+                            }
+                            highPassCutoffValue = 0f;
+                        }
+                    }
+                }
+            }
             SetCutoffValues(soundSourcesArr[i], lowPassCutoffValue, highPassCutoffValue);
         }
         highPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexLowBound(arrayLen));
@@ -137,25 +169,19 @@ public class PlotManager : MonoBehaviour
     //toggles the (1 minute) plots
     private void OnToggle1ValueChanged(bool isOn)
     {
-        UpdateSpectrogramTimeAxis(1);
         UpdateBearingTimeAxis(1);
-        plotsGameObjects[0].GetComponent<MeshRenderer>().enabled = true;
-        plotsGameObjects[1].GetComponent<MeshRenderer>().enabled = false;
 
-        plotsGameObjects[2].GetComponent<MeshRenderer>().enabled = true;
-        plotsGameObjects[3].GetComponent<MeshRenderer>().enabled = false;
+        plotsGameObjects[1].GetComponent<MeshRenderer>().enabled = true;
+        plotsGameObjects[2].GetComponent<MeshRenderer>().enabled = false;
     }
 
     //toggles the (5 minute) plots
     private void OnToggle2ValueChanged(bool isOn)
     {
-        UpdateSpectrogramTimeAxis(2);
         UpdateBearingTimeAxis(2);
-        plotsGameObjects[1].GetComponent<MeshRenderer>().enabled = true;
-        plotsGameObjects[0].GetComponent<MeshRenderer>().enabled = false;
 
-        plotsGameObjects[3].GetComponent<MeshRenderer>().enabled = true;
-        plotsGameObjects[2].GetComponent<MeshRenderer>().enabled = false;
+        plotsGameObjects[2].GetComponent<MeshRenderer>().enabled = true;
+        plotsGameObjects[1].GetComponent<MeshRenderer>().enabled = false;
     }
 
     //pass it as argument which one of the plot's number of seconds which

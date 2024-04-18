@@ -31,10 +31,11 @@ public class PlotGenerator : MonoBehaviour
     private Color[] plotColors;
     private int numberPixelsX;
     private int numberPixelsY;
+    float scalingFactor = 0.1f;
 
     //the first line of pixels, it will be updated in a way which is dependent on the type of plot
     [SerializeField]
-    private float[] pixelsLine;
+    private float[] pixelsLineAmplitude;
     [SerializeField]
     private float[] spectrumAudioSource;
     //used to hold the 
@@ -81,14 +82,14 @@ public class PlotGenerator : MonoBehaviour
 
         //we create an array which will hold the intensity values of each bin corresponding to the number of pixels
         //this does not hold the colour of the pixel
-        pixelsLine = new float[numberPixelsX];
+        pixelsLineAmplitude = new float[numberPixelsX];
 
 
         //we get the list of sound sources
         soundSourcesArr = entityManager.getSoundSourcesArray();
 
         //we create the array which holds the "label" aka the frequency of each bin corresponding to the line of pixels
-        frequencyNumberArr = utilities.createFreqArray(pixelsLine.Length);
+        frequencyNumberArr = utilities.createFreqArray(pixelsLineAmplitude.Length);
 
         //create the range at which certain frequencies can be picked up
         frequenciesDetectableRange = new float[numberPixelsX];
@@ -132,7 +133,7 @@ public class PlotGenerator : MonoBehaviour
     public void UpdateColors(){
         //updates the bottom row
         for(int x = 0; x < numberPixelsX; x++){
-            plotColors[x] = gradient.Evaluate(utilities.normaliseSoundDecebels(utilities.convertToDecebels(pixelsLine[x])));
+            plotColors[x] = gradient.Evaluate(utilities.normaliseSoundDecebels(utilities.convertToDecebels(pixelsLineAmplitude[x])));
         }
 
         //replaces each upper row with the one below it, starts with the top one
@@ -149,8 +150,8 @@ public class PlotGenerator : MonoBehaviour
 
     private void UpdateLineSpectrogram(){
         spectrumAudioSource = new float[numberOfBins];
-        for (int i = 0; i < pixelsLine.Length; i++){
-            pixelsLine[i] = 0f;
+        for (int i = 0; i < pixelsLineAmplitude.Length; i++){
+            pixelsLineAmplitude[i] = 0f;
         }
          //Go through each sound source in the scene
         for (int i = 0; i < soundSourcesArr.Length; i++){
@@ -158,32 +159,34 @@ public class PlotGenerator : MonoBehaviour
             soundSourcesArr[i].GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
             //find the relative angle of the sound source to the beam
             float soundRotRelative = utilities.getRelativeAngleAtSoundSource(i);
-            for (int j = 0; j < pixelsLine.Length; j++){
+            for (int j = 0; j < pixelsLineAmplitude.Length; j++){
                 //binary mask
+                //check if the relative angle of the sound source is within the user defined beam
+                //or if the frequency can be detected from said angle
                 if ((soundRotRelative < (userControls.getSonarBeamWidth() / 2) || (soundRotRelative < (frequenciesDetectableRange[j] * Mathf.Rad2Deg / 2)))){
-                    pixelsLine[j] += spectrumAudioSource[j];
+                    pixelsLineAmplitude[j] += spectrumAudioSource[j];
                 }
+                
                 //mask using the formula given by the sound intensity
                 /*
-                if(soundRotRelative < (bearingOverlay.getSonarBeamWidth() /2 )){
-                    linePixels[j] += spectrumAudioSource[j] * utilities.getSoundIntensity(soundRotRelative , frequencyNumberArr[i]); 
+                if((soundRotRelative < (userControls.getSonarBeamWidth() / 2) || (soundRotRelative < (frequenciesDetectableRange[j] * Mathf.Rad2Deg / 2)))){
+                    pixelsLineAmplitude[j] += spectrumAudioSource[j] * utilities.getSoundIntensity(soundRotRelative , frequencyNumberArr[i]); 
                 }
                 */
             }
             
             //noise function will have to look into
             noise.GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
-            float scalingFactor = 0.2f;
-            for (int j = 0; j < pixelsLine.Length; j++){
-                pixelsLine[j] += (spectrumAudioSource[j] * scalingFactor * (userControls.getSonarBeamWidth() * Mathf.Deg2Rad));
+            for (int j = 0; j < pixelsLineAmplitude.Length; j++){
+                pixelsLineAmplitude[j] += (spectrumAudioSource[j] * scalingFactor * (userControls.getSonarBeamWidth() * Mathf.Deg2Rad));
             }
         }
     }
 
     private void UpdateLineBearing(){
         spectrumAudioSource = new float[numberOfBins];
-        for(int i = 0; i < pixelsLine.Length; i++){
-            pixelsLine[i] = 0f;
+        for(int i = 0; i < pixelsLineAmplitude.Length; i++){
+            pixelsLineAmplitude[i] = 0f;
         }
 
         //for each sound source in the scene
@@ -191,25 +194,29 @@ public class PlotGenerator : MonoBehaviour
             soundSourcesArr[i].GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
             float soundRot =  utilities.getAngleAtSoundSource(i);
 
+            //how many pixels are drawn per degree
             float pixelsPerDegree = numberPixelsX / 360f;
+            //get the center index for the sound source on the bearing plot
             int lineCenterPoint = utilities.Remap(soundRot, -180f, 180f, (float)numberPixelsX - 1, 0f);
 
-            int firstPos = utilities.getFrequencyArrayIndexLowBound(pixelsLine.Length);
-            int secondPos = utilities.getFrequencyArrayIndexUpperBound(pixelsLine.Length);
+            //get the frequency indencies for the user defined limits for the bandwith
+            int firstPos = utilities.getFrequencyArrayIndexLowBound(pixelsLineAmplitude.Length);
+            int secondPos = utilities.getFrequencyArrayIndexUpperBound(pixelsLineAmplitude.Length);
             for (int j = firstPos; j < secondPos; j++)
             {
-                int lineThickness = (int)(frequenciesDetectableRange[j] * Mathf.Rad2Deg * pixelsPerDegree);
-                //nt lineThickness = 10;
+                //for a frequency, get the range in degrees, from which it can be picked up when it is emmitied from 
+                //some sound source in relation to the submarine
+                int lineLength = (int)(frequenciesDetectableRange[j] * Mathf.Rad2Deg / 2 * pixelsPerDegree);
                 float amplitude = spectrumAudioSource[j] * spectrumAudioSource[j];
 
-                AddSourceToLine(lineCenterPoint, lineThickness, amplitude);
+                AddSourceToLine(lineCenterPoint, lineLength, amplitude);
             }
         }
 
         //add gausian instead of normal
-        for (int i = 0; i < pixelsLine.Length; i++){
+        for (int i = 0; i < pixelsLineAmplitude.Length; i++){
             //adds gaussian white noise to a time sample in the bearing plot
-            pixelsLine[i] = pixelsLine[i] + (utilities.Gaussian(0f, utilities.calculateStandardDeviationNoiseBearing(frequencyNumberArr.Length)));
+            pixelsLineAmplitude[i] = pixelsLineAmplitude[i] + (scalingFactor * utilities.Gaussian(0f, utilities.calculateStandardDeviationNoiseBearing(frequencyNumberArr.Length)));
         }
         /*
         for (int i = 0; i < pixelsLine.Length; i++){
@@ -218,16 +225,12 @@ public class PlotGenerator : MonoBehaviour
         */
     }
 
-    private float getLineThickness(float f, float beamWidth){
-        return ( (100 - userControls.getMinBandwidth()) / 100) * userControls.getSonarBeamWidth();
-    }
-
-    private void AddSourceToLine(int lineCenter, int lineThick, float amp)
+    private void AddSourceToLine(int lineCenter, int lineLength, float amp)
     {
-        int arrCutoff = pixelsLine.Length - 1;
-        int[] temp = new int[lineThick * 2 + 1];
+        int arrCutoff = pixelsLineAmplitude.Length - 1;
+        int[] temp = new int[lineLength * 2 + 1];
 
-        int lineStart = lineCenter - lineThick;
+        int lineStart = lineCenter - lineLength;
         if(lineStart < 0){
             lineStart = arrCutoff + 1 + lineStart;
         }
@@ -235,7 +238,7 @@ public class PlotGenerator : MonoBehaviour
         for (int i = 0; i < temp.Length; i++)
         {
             if(lineStart + i > arrCutoff){
-                temp[i] = lineThick*2 - i;
+                temp[i] = lineLength*2 - i;
             }
             else{
                 temp[i] = lineStart + i;
@@ -243,7 +246,7 @@ public class PlotGenerator : MonoBehaviour
         }
 
         for (int i = 0; i < temp.Length; i++){
-            pixelsLine[temp[i]] = pixelsLine[temp[i]] + amp;
+            pixelsLineAmplitude[temp[i]] = pixelsLineAmplitude[temp[i]] + amp;
         }
     }
 

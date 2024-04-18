@@ -50,12 +50,13 @@ public class SoundSourceBehaviour : MonoBehaviour
     private IEnumerator MoveToDestination()
     {
         for(int i = 1; i < movement.time.Length; i++){
+            timer = 0f;
             initialPosition = transform.position;
             float x =  movement.x[i];
             float y =  movement.y[i];
             destination = new Vector2(x, y);
 
-            timeToReachDestination = movement.time[i];
+            timeToReachDestination = movement.time[i] - movement.time[i-1];
 
             while (timer < timeToReachDestination)
             {
@@ -65,9 +66,23 @@ public class SoundSourceBehaviour : MonoBehaviour
                 yield return null; // Wait for the next frame
             }
             transform.position = destination;
-            // Ensure the GameObject reaches the exact destination at the end
+
+            yield return null;
         }        
     }
+
+    public void Capture(float timeCaptured){
+        StartCoroutine(Mute(timeCaptured));
+    }
+
+    private IEnumerator Mute(float timeCaptured)
+    {
+        GetComponent<AudioSource>().volume = 0f;
+        yield return new WaitForSeconds(timeCaptured);
+        GetComponent<AudioSource>().volume = 1f;
+
+    }
+
 
     public void setPosition(Vector3 newPos){
         transform.position = newPos;

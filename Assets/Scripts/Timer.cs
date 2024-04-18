@@ -17,7 +17,6 @@ public class Timer : MonoBehaviour
     public GameObject nextLevelPanel;
 
     public GameObject endScreenPanel;
-    public int test;
 
     public void SetPanelInteractibility(GameObject panel, bool visible){
         panel.SetActive(visible);
@@ -33,7 +32,7 @@ public class Timer : MonoBehaviour
     */
     void HandleNextLevelButtonClick()
     { 
-        Time.timeScale = 0;
+        Time.timeScale = 0f;
         persistentData.currentScenarioNumb++;
         levelManager.NextLevel();  
         SetPanelInteractibility(endScreenPanel, false);
@@ -42,12 +41,12 @@ public class Timer : MonoBehaviour
 
     //make the "next scenario" screen appear
     public void NextScenarioScreen(){
-        Time.timeScale = 0;
+        Time.timeScale = 0f;
         SetPanelInteractibility(nextLevelPanel, true);
     }
 
     public void EndScreen(){
-        Time.timeScale = 0;
+        Time.timeScale = 0f;
         SetPanelInteractibility(endScreenPanel, true);
     }
 
@@ -56,7 +55,7 @@ public class Timer : MonoBehaviour
     {
         SetPanelInteractibility(endScreenPanel, false);
         SetPanelInteractibility(nextLevelPanel, false);
-        Time.timeScale = 1;
+        Time.timeScale = 35f;
         nextScenarioButton.onClick.AddListener(HandleNextLevelButtonClick);
 
         endScreenButton.onClick.AddListener(HandleEndScreenButtonClick);
@@ -104,6 +103,7 @@ public class Timer : MonoBehaviour
              //if timer reached 0 move on to next scenario
             timerText.text = "00:00:000";
             if(persistentData.currentScenarioNumb < persistentData.GetNumberOfScenarios()){
+                persistentData.ResetScore();
                 NextScenarioScreen();
             }
             else{

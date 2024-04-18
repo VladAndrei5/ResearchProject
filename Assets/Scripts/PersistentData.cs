@@ -9,6 +9,7 @@ public class PersistentData : MonoBehaviour
     public TextAsset jsonScenariosFile;
     public ScenarioData scenarioData;
     public int currentScenarioNumb;
+    public int currentScore;
 
     void Awake()
     {
@@ -18,6 +19,19 @@ public class PersistentData : MonoBehaviour
         scenarioData = JsonConvert.DeserializeObject<ScenarioData>(jsonScenariosFile.text);
         //set up the current scenario number
         currentScenarioNumb = 1;
+        ResetScore();
+    }
+
+    public int GetScore(){
+        return currentScore;
+    }
+
+    public void UpdateScore(int reward){
+        currentScore = currentScore + reward;
+    }
+
+    public void ResetScore(){
+        currentScore = 0;
     }
 
     //returns the current scenario being played

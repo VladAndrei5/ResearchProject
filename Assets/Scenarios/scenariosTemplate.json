@@ -1,0 +1,28 @@
+{
+  "scenarios": [
+    {
+      "id": "scenario1",
+      "countdown": 350,
+      "AIType": "neutral",
+      "numberEntities": 1,
+      "entities": [
+        {
+          "id": "entity1",
+          "audio": "boat_row",
+          "realClass": "ship",
+          "movement" : {
+            "time" : [0, 10, 15, 24],
+            "x" : [5, 6, 23, 15],
+            "y" : [5, 15, 10, 15]
+          },
+          "AI" : {
+            "time" : [0, 10, 20,30],
+            "classType" : ["ship", "pirate", "pirate","pirate"],
+            "confidence" : [90, 80, 60,40]
+          }
+        }
+      ]
+    }
+
+  ]
+}

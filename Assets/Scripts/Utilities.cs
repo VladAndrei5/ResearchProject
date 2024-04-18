@@ -26,7 +26,9 @@ public class Utilities : MonoBehaviour
 
     //set the limits for the decebels
     //used in normalisation
-    private float minDecebels = -144f;
+    //private float minDecebels = -144f;
+    private float minDecebels = -120f;
+
     private float maxDecebels = 0f;
 
     //sound speed in water measured in meters per second
@@ -36,7 +38,6 @@ public class Utilities : MonoBehaviour
     //references to classes
     public UserControls userControls;
     public EntityManager entityManager;
-    public PlotManager plotManager;
     GameObject[] soundSourcesArr;
 
     //array which holds and updates the relative angle of all soundsources to the beam

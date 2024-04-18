@@ -61,10 +61,12 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public void UpdateDisplayAI(){
         isClassChosenByUser = false;
         displayedClass = AIEstimationClass;
-        displayedConfidence = AIEstimationConfidence;
+        //displayedConfidence = AIEstimationConfidence;
         UpdateDisplaySymbol();
         if(isTrackerSelected){
             ledgerUI.UpdateDisplayedText();
+            ledgerUI.UpdateDisplaySymbol();
+            ledgerUI.UpdateDisplayAI();
         }
     }
 
@@ -72,10 +74,12 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public void UpdateDisplayUser(string selectedClass){
         isClassChosenByUser = true;
         displayedClass = selectedClass;
-        displayedConfidence = 100;
+        //displayedConfidence = AIEstimationConfidence;
         UpdateDisplaySymbol();
         if(isTrackerSelected){
             ledgerUI.UpdateDisplayedText();
+            ledgerUI.UpdateDisplaySymbol();
+            ledgerUI.UpdateDisplayAI();
         }
     }
 
@@ -106,7 +110,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
         counter = 0;
         UpdateAIEstimation();
-        StartCoroutine(UpdateVisibility(soundSourcePair.getGameObject()));
+        //StartCoroutine(UpdateVisibility(soundSourcePair.getGameObject()));
     }
     void Start()
     {
@@ -140,27 +144,32 @@ public class BearingTrackerBehaviour : MonoBehaviour
     }
     
     private IEnumerator UpdateVisibility(GameObject soundSource){
-        
-        spectrumAudioSource = new float[64];
         while(true){
-            //Debug.Log("Gello");
-            soundSource.GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
-            float highestApmlitude = 0f;
-            for (int j = 0; j < spectrumAudioSource.Length / 2; j++){
-                if(highestApmlitude < spectrumAudioSource[j]){
-                    highestApmlitude =spectrumAudioSource[j];
-                    spectrumAudioSource[j] = 0f;
-                }
-            }
-            //Debug.Log(highestApmlitude);
-            //Debug.Log(utilities.normaliseSoundDecebels(utilities.convertToDecebels(highestApmlitude)));
-            if( utilities.normaliseSoundDecebels(utilities.convertToDecebels(highestApmlitude))  < 0.24){
-                GetComponent<SpriteRenderer>().enabled = false;
-            }
-            else{
-                GetComponent<SpriteRenderer>().enabled = true;
-            }
+            CheckVisibility(soundSource);
             yield return null;
+        }
+    }
+
+    private void CheckVisibility(GameObject soundSource){
+        spectrumAudioSource = new float[64];
+        soundSource.GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
+        float highestApmlitude = 0f;
+        for (int j = 0; j < spectrumAudioSource.Length / 2; j++){
+            if(highestApmlitude < spectrumAudioSource[j]){
+                highestApmlitude =spectrumAudioSource[j];
+                spectrumAudioSource[j] = 0f;
+            }
+        }
+        //Debug.Log(highestApmlitude);
+        //Debug.Log(utilities.normaliseSoundDecebels(utilities.convertToDecebels(highestApmlitude)));
+        if( utilities.normaliseSoundDecebels(utilities.convertToDecebels(highestApmlitude))  < 0.24){
+            GetComponent<SpriteRenderer>().enabled = false;
+            if(isTrackerSelected){
+                ledgerUI.Unselect();
+            }
+        }
+        else{
+            GetComponent<SpriteRenderer>().enabled = true;
         }
     }
     
@@ -193,5 +202,28 @@ public class BearingTrackerBehaviour : MonoBehaviour
         
         
     }
+
+    public void Capture(){
+        if(GetComponent<SpriteRenderer>().enabled == true){
+            if(isTrackerSelected){
+                ledgerUI.Unselect();
+            }
+            float timeCaptured = 5f;
+            soundSourcePair.Capture(timeCaptured);
+            StartCoroutine(Hide(timeCaptured));
+        }
+    }
+
+    private IEnumerator Hide(float timeCaptured)
+    {
+        GetComponent<SpriteRenderer>().enabled = false;
+        yield return new WaitForSeconds(timeCaptured);
+        GetComponent<SpriteRenderer>().enabled = true;
+        //CheckVisibility(soundSourcePair.getGameObject());
+
+    }
     
+    public string getRealClass(){
+        return realClass;
+    }
 }
