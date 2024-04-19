@@ -17,6 +17,7 @@ public class Scenario
     public string id;
     public int countdown;
     public string AIType;
+    public float noiseScalingFactor;
     public int numberEntities;
     public List<Entity> entities;
 }

@@ -4,6 +4,7 @@
       "id": "scenario1",
       "countdown": 350,
       "AIType": "neutral",
+      "noiseScalingFactor": 0.9,
       "numberEntities": 3,
       "entities": [
         {

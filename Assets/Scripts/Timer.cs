@@ -55,7 +55,7 @@ public class Timer : MonoBehaviour
     {
         SetPanelInteractibility(endScreenPanel, false);
         SetPanelInteractibility(nextLevelPanel, false);
-        Time.timeScale = 35f;
+        Time.timeScale = 1f;
         nextScenarioButton.onClick.AddListener(HandleNextLevelButtonClick);
 
         endScreenButton.onClick.AddListener(HandleEndScreenButtonClick);

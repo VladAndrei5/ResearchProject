@@ -3305,6 +3305,7 @@ MonoBehaviour:
   utilities: {fileID: 1052755790}
   userControls: {fileID: 231848793}
   entityManager: {fileID: 626933008}
+  persistentData: {fileID: 0}
   frequenciesDetectableRange: []
   frequencyNumberArr: []
   noise: {fileID: 2063794650}
@@ -3316,6 +3317,7 @@ MonoBehaviour:
   timeTextAxisBearing2: {fileID: 471587974}
   timeTextAxisBearing3: {fileID: 98436791}
   timeTextMeasureBearing: {fileID: 40113733}
+  maxNoiseVolume: 0
 --- !u!1 &402789440
 GameObject:
   m_ObjectHideFlags: 0
@@ -14366,7 +14368,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: -6160353297524996352, guid: 8a48000114e798b42a49118e6d962688, type: 2}
   m_audioClip: {fileID: 8300000, guid: b0589a8797825744fbce9673baeeb9c6, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.3
+  m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0

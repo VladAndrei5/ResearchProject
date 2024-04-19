@@ -45,6 +45,7 @@ public class PlotManager : MonoBehaviour
     public Utilities utilities;
     public UserControls userControls;
     public EntityManager entityManager;
+    public PersistentData persistentData;
 
 
     // to update
@@ -68,8 +69,17 @@ public class PlotManager : MonoBehaviour
     public TextMeshProUGUI  timeTextAxisBearing3;
     public TextMeshProUGUI  timeTextMeasureBearing;
 
+    public float maxNoiseVolume;
 
     void Start(){
+        //get persistent data reference
+        GameObject persistentDataOBJ = GameObject.FindWithTag("PersistentData");
+        persistentData = persistentDataOBJ.GetComponent<PersistentData>();
+
+        //update the maximum volume of the noise
+        maxNoiseVolume = persistentData.GetNoiseScalingFactor();
+        noise.GetComponent<AudioSource>().volume = maxNoiseVolume;
+
         //Create all the plots
         for(int i = 0; i < plotTypes.Length; i++){
             PlotGenerator plot = plotsGameObjects[i].GetComponent<PlotGenerator>();
@@ -92,36 +102,13 @@ public class PlotManager : MonoBehaviour
         float highPassCutoffValue = 10;
         int arrayLen = resolutionPixelsX[0];
         for(int i = 0; i < soundSourcesArr.Length; i++){
-            //Debug.Log("Hello");
             float rot =  utilities.getRelativeAngleAtSoundSource(i);
-            //Debug.Log("Rot: " + rot);
-            //Debug.Log("userControls.getSonarBeamWidth() / 2: " + (userControls.getSonarBeamWidth() / 2));
-            //Debug.Log("(frequenciesDetectableRange[j] * Mathf.Rad2Deg / 2): " + (frequenciesDetectableRange[0] * Mathf.Rad2Deg / 2));
             lowPassCutoffValue = 10;
             highPassCutoffValue = utilities.maxSonarFrequency;
-
-            /*
-            for (int j = 0; j < frequenciesDetectableRange.Length; j++){
-                 if ((rot < (userControls.getSonarBeamWidth() / 2) || (rot < (frequenciesDetectableRange[j] * Mathf.Rad2Deg / 2)))){
-                    highPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexLowBound(arrayLen));
-                    lowPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexUpperBound(arrayLen));
-                    Debug.Log(highPassCutoffValue);
-                    Debug.Log(lowPassCutoffValue);
-                }
-            }
-            */
-
-            //debugging
-            if(i == 0){
-                Debug.Log("rot " + rot);
-                Debug.Log("smallest: " + (frequenciesDetectableRange[0] * Mathf.Rad2Deg / 2));
-            }
 
             if ((rot < (userControls.getSonarBeamWidth() / 2))){
                     highPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexLowBound(arrayLen));
                     lowPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexUpperBound(arrayLen));
-                    //Debug.Log(highPassCutoffValue);
-                    //Debug.Log(lowPassCutoffValue);
             }
             else{
                 //tried to optimise this to reduce the computation
@@ -137,8 +124,6 @@ public class PlotManager : MonoBehaviour
                     else{
                         if(found){
                             found = false;
-                            Debug.Log("found" + j);
-                            Debug.Log(utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexUpperBound(arrayLen)));
                             //check if the frequency is lower than the limit defined by the user, in which case the limit takes over, else the physics
                             if(frequencyNumberArr[j - 1] < utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexLowBound(arrayLen))){
                                 lowPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexLowBound(arrayLen));
@@ -153,6 +138,7 @@ public class PlotManager : MonoBehaviour
             }
             SetCutoffValues(soundSourcesArr[i], lowPassCutoffValue, highPassCutoffValue);
         }
+        noise.GetComponent<AudioSource>().volume = maxNoiseVolume * (userControls.getSonarBeamWidth() / 360f);
         highPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexLowBound(arrayLen));
         lowPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexUpperBound(arrayLen));
         SetCutoffValues(noise, lowPassCutoffValue, highPassCutoffValue);

@@ -43,4 +43,8 @@ public class PersistentData : MonoBehaviour
         return scenarioData.scenarios.Length;
     }
 
+    public float GetNoiseScalingFactor(){
+        return scenarioData.scenarios[currentScenarioNumb-1].noiseScalingFactor;
+    }
+
 }
