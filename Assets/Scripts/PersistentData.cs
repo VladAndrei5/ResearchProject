@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
+using System.IO;
 
 public class PersistentData : MonoBehaviour
 {
@@ -10,6 +11,13 @@ public class PersistentData : MonoBehaviour
     public ScenarioData scenarioData;
     public int currentScenarioNumb;
     public int currentScore;
+
+
+    private List<int> TimeScoreList = new List<int>();
+    private string scoreFileName = "scoreFile.txt";
+
+
+    //public TextAsset SaveScoreFile;
 
     void Awake()
     {
@@ -22,11 +30,28 @@ public class PersistentData : MonoBehaviour
         ResetScore();
     }
 
+    private void SaveIntListToTextFile()
+    {
+        string filePath = Path.Combine(Application.dataPath, scoreFileName);
+
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            foreach (int value in TimeScoreList)
+            {
+                writer.WriteLine(value);
+            }
+        }
+
+        Debug.Log("Int list saved to file: " + filePath);
+    }
+
     public int GetScore(){
         return currentScore;
     }
 
     public void UpdateScore(int reward){
+        TimeScoreList.Add(reward);
+        SaveIntListToTextFile();
         currentScore = currentScore + reward;
     }
 

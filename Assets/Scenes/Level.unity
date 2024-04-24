@@ -1055,12 +1055,12 @@ GameObject:
   m_Component:
   - component: {fileID: 151602077}
   m_Layer: 0
-  m_Name: ChooseClassification
+  m_Name: ChooseClassificationTab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &151602077
 Transform:
   m_ObjectHideFlags: 0
@@ -14549,6 +14549,7 @@ MonoBehaviour:
   selectedTracker: {fileID: 0}
   persistentData: {fileID: 0}
   AITab: {fileID: 318791505}
+  ChooseClassificationTab: {fileID: 151602076}
 --- !u!4 &2115084418
 Transform:
   m_ObjectHideFlags: 0

@@ -40,6 +40,7 @@ public class LedgerUI : MonoBehaviour
     //
     public PersistentData persistentData;
     public GameObject AITab;
+    public GameObject ChooseClassificationTab;
 
     //handles the toggles
     //! To update description !
@@ -108,6 +109,7 @@ public class LedgerUI : MonoBehaviour
 
     //it takes a tracker and sets it as selected
     public void SelectTracker(BearingTrackerBehaviour t){
+        ChooseClassificationTab.SetActive(true);
         //turn off the outline of previous selected tracker
         if(selectedTracker != null){
             selectedTracker.ToggleTrackerOutline(false);
@@ -236,6 +238,7 @@ public class LedgerUI : MonoBehaviour
         UpdateDisplayedText();
         UpdateDisplaySymbol();
         UpdateDisplayAI();
+        ChooseClassificationTab.SetActive(false);
     }
 
 
