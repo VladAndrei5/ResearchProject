@@ -47,4 +47,8 @@ public class PersistentData : MonoBehaviour
         return scenarioData.scenarios[currentScenarioNumb-1].noiseScalingFactor;
     }
 
+    public void SaveGame(){
+        
+    }
+
 }

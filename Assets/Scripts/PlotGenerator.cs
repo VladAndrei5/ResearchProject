@@ -178,7 +178,8 @@ public class PlotGenerator : MonoBehaviour
             //noise function will have to look into
             noise.GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
             for (int j = 0; j < pixelsLineAmplitude.Length; j++){
-                pixelsLineAmplitude[j] += (spectrumAudioSource[j] * scalingFactor * (userControls.getSonarBeamWidth() * Mathf.Deg2Rad));
+                //pixelsLineAmplitude[j] += (spectrumAudioSource[j] * scalingFactor * (userControls.getSonarBeamWidth() * Mathf.Deg2Rad));
+                pixelsLineAmplitude[j] += spectrumAudioSource[j];
             }
         }
     }

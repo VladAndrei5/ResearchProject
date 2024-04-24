@@ -208,7 +208,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
             if(isTrackerSelected){
                 ledgerUI.Unselect();
             }
-            float timeCaptured = 5f;
+            float timeCaptured = 35f;
             soundSourcePair.Capture(timeCaptured);
             StartCoroutine(Hide(timeCaptured));
         }
