@@ -75,7 +75,7 @@ public class Timer : MonoBehaviour
     {
         if (currentTime > 0)
         {
-            if (currentTime < 15)
+            if (currentTime < 60)
             {
                 timerText.color = Color.red;
                 float rotationAmount = 300f * Time.deltaTime;

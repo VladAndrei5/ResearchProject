@@ -4,7 +4,7 @@
       "id": "easy_no_AI",
       "countdown": 450,
       "AIType": "noAI",
-      "noiseScalingFactor": 0.8,
+      "noiseScalingFactor": 0.05,
       "numberEntities": 4,
       "entities": [
         {

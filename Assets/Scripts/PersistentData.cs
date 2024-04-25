@@ -30,7 +30,7 @@ public class PersistentData : MonoBehaviour
         ResetScore();
     }
 
-    private void SaveIntListToTextFile()
+    private void SaveToTextFile()
     {
         string filePath = Path.Combine(Application.dataPath, scoreFileName);
 
@@ -51,7 +51,7 @@ public class PersistentData : MonoBehaviour
 
     public void UpdateScore(int reward){
         TimeScoreList.Add(reward);
-        SaveIntListToTextFile();
+        SaveToTextFile();
         currentScore = currentScore + reward;
     }
 

@@ -1,0 +1,66 @@
+{
+  "scenarios": [
+    {
+      "id": "easy_no_AI",
+      "countdown": 30,
+      "AIType": "noAI",
+      "noiseScalingFactor": 0.05,
+      "numberEntities": 1,
+      "entities": [
+        {
+        "id": "pirate",
+          "audio": "sonar_ping_extended_sim",
+          "realClass": "pirate",
+          "movement": {
+            "time": [
+              0,
+            ],
+            "x": [
+              46
+            ],
+            "y": [
+              -33
+            ]
+          },
+          "AI" : {
+            "time" : [0],
+            "classType" : ["unknown"],
+            "confidence" : [0]
+          }
+        }
+      ]
+    },
+    {
+      "id": "easy_no_AI",
+      "countdown": 30,
+      "AIType": "regularAI",
+      "noiseScalingFactor": 0.05,
+      "numberEntities": 1,
+      "entities": [
+        {
+        "id": "pirate",
+          "audio": "sonar_ping_extended_sim",
+          "realClass": "pirate",
+          "movement": {
+            "time": [
+              0,
+            ],
+            "x": [
+              46
+            ],
+            "y": [
+              -33
+            ]
+          },
+          "AI" : {
+            "time" : [0],
+            "classType" : ["unknown"],
+            "confidence" : [0]
+          }
+        }
+      ]
+    }
+  ]
+}
+
+
