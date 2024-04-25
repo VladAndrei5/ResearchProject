@@ -55,7 +55,7 @@ public class Timer : MonoBehaviour
     {
         SetPanelInteractibility(endScreenPanel, false);
         SetPanelInteractibility(nextLevelPanel, false);
-        Time.timeScale = 2f;
+        Time.timeScale = 1f;
         nextScenarioButton.onClick.AddListener(HandleNextLevelButtonClick);
 
         endScreenButton.onClick.AddListener(HandleEndScreenButtonClick);
@@ -78,7 +78,7 @@ public class Timer : MonoBehaviour
             if (currentTime < 60)
             {
                 timerText.color = Color.red;
-                float rotationAmount = 300f * Time.deltaTime;
+                float rotationAmount = 1f * Time.deltaTime;
 
                 // Create a rotation increment based on the calculated rotation amount
                 Quaternion rotationIncrement = Quaternion.Euler(0f, rotationAmount, 0f);

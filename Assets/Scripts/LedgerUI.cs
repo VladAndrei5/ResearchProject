@@ -18,7 +18,7 @@ public class LedgerUI : MonoBehaviour
 
     //what is the 
     public string selectedClass;
-    public bool AIEstimation;
+    public bool isAIestimationOn;
     
     //references to the text objects which will be updated
     public TextMeshProUGUI textDisplayedClass;
@@ -45,43 +45,79 @@ public class LedgerUI : MonoBehaviour
     //handles the toggles
     //! To update description !
     private void shipToggleChanged(bool isOn){
+        Debug.Log("Ship1");
+        if(!isOn){
+            return;
+        }
+        if(!selectedTracker.isSoundSourceActive){
+            return;
+        }
+        Debug.Log("Ship2");
         selectedClass = "ship";
-        AIEstimation = false;
+        isAIestimationOn = false;
         Override();
     }
 
     private void pirateToggleChanged(bool isOn){
+        if(!isOn){
+            return;
+        }
+        if(!selectedTracker.isSoundSourceActive){
+            return;
+        }
         selectedClass = "pirate";
-        AIEstimation = false;
+        isAIestimationOn = false;
         Override();
     }
 
     private void seaLifeToggleChanged(bool isOn){
+        if(!isOn){
+            return;
+        }
+        if(!selectedTracker.isSoundSourceActive){
+            return;
+        }
         selectedClass = "seaLife";
-        AIEstimation = false;
+        isAIestimationOn = false;
         Override();
     }
 
     private void unknownToggleChanged(bool isOn){
+        if(!isOn){
+            return;
+        }
+        if(!selectedTracker.isSoundSourceActive){
+            return;
+        }
         selectedClass = "unknown";
-        AIEstimation = false;
+        isAIestimationOn = false;
         Override();
     }
 
     private void AIEstimationToggleChanged(bool isOn){
-        AIEstimation = true;
+        if(!isOn){
+            return;
+        }
+        if(!selectedTracker.isSoundSourceActive){
+            return;
+        }
+        isAIestimationOn = true;
         Override();
     }
 
     public void Override(){
         if(selectedTracker != null){
-            if(AIEstimation){
-                selectedTracker.UpdateDisplayAI();
+            if(isAIestimationOn){
+                selectedTracker.DisplayAIEstimation();
             }
             else{
-                selectedTracker.UpdateDisplayUser(selectedClass);
+                selectedTracker.DisplayUserClass(selectedClass);
             }
         }
+    }
+
+    public void SetToggleOn(Toggle toggle){
+        toggle.isOn = true;
     }
 
     private void Start()
@@ -96,7 +132,7 @@ public class LedgerUI : MonoBehaviour
 
         userColor = Color.yellow;
         AIColor = Color.white;
-        AIEstimation = true;
+        isAIestimationOn = true;
         selectedClass = "unknown";
         shipToggle.onValueChanged.AddListener(shipToggleChanged);
         pirateToggle.onValueChanged.AddListener(pirateToggleChanged);
@@ -109,49 +145,56 @@ public class LedgerUI : MonoBehaviour
 
     //it takes a tracker and sets it as selected
     public void SelectTracker(BearingTrackerBehaviour t){
-        ChooseClassificationTab.SetActive(true);
+        Debug.Log("Selected");
+        if(t.isSoundSourceActive == false){
+            return;
+        }
         //turn off the outline of previous selected tracker
         if(selectedTracker != null){
             selectedTracker.ToggleTrackerOutline(false);
             selectedTracker.isTrackerSelected = false;
+            Unselect();
         }
-        t.isTrackerSelected = true;
-        /*
-        if(!t.isClassChosenByUser){
-            AIEstimationToggleChanged(true);
+
+        ChooseClassificationTab.SetActive(true);
+        selectedTracker = t;
+
+        selectedTracker.isTrackerSelected = true;
+
+        if(selectedTracker.isAIactive){
+            SetToggleOn(AIEstimationToggle);
+            isAIestimationOn = true;
         }
         else{
-            string newTrackerClass = t.displayedClass;
+            string newTrackerClass = selectedTracker.displayedClass;
             switch (newTrackerClass)
             {
                 case "pirate":
-                    //Debug.Log()
-                    pirateToggleChanged(true);
+                    SetToggleOn(pirateToggle);
                     break;
                 case "seaLife":
-                    seaLifeToggleChanged(true);
+                    SetToggleOn(seaLifeToggle);
                     break;
                 case "ship":
-                    shipToggleChanged(true);
+                    SetToggleOn(shipToggle);
                     break;
+                case "unknown":
+                    SetToggleOn(unknownToggle);
+                    break;    
                 default:
-                    unknownToggleChanged(true);
                     break;
             }
         }
-        */
-
-        selectedTracker = t;
         //selectedTracker.isTrackerSelected = true;
         //turn on the outline for the current selected tracker
         selectedTracker.ToggleTrackerOutline(true);
-        UpdateDisplayedText();
-        UpdateDisplaySymbol();
-        UpdateDisplayAI();
+        UpdateLedgerSelectedClassText();
+        UpdateLedgerSelectedClassSymbol();
+        UpdateAITab();
     }
 
     //updates the text of the ledger to match the selected tracker
-    public void UpdateDisplayedText(){
+    public void UpdateLedgerSelectedClassText(){
         if(selectedTracker != null){
             displayedClass = selectedTracker.displayedClass;
             string newText = "";
@@ -166,6 +209,9 @@ public class LedgerUI : MonoBehaviour
                 case "ship":
                     newText = "Ship";
                     break;
+                case "none":
+                    newText = "none";
+                    break;
                 default:
                     newText = "Unknown";
                     break;
@@ -178,7 +224,7 @@ public class LedgerUI : MonoBehaviour
 
     }
 
-    public void UpdateDisplayAI(){
+    public void UpdateAITab(){
         if(selectedTracker != null){
             displayedAIClass = selectedTracker.AIEstimationClass;
             string newText = "";
@@ -192,6 +238,9 @@ public class LedgerUI : MonoBehaviour
                     break;
                 case "ship":
                     newText = "Ship";
+                    break;
+                case "none":
+                    newText = "none";
                     break;
                 default:
                     newText = "Unknown";
@@ -212,20 +261,25 @@ public class LedgerUI : MonoBehaviour
     private void ButtonOverrideClicked()
     {
         if(selectedTracker != null){
-            if(AIEstimation){
-                selectedTracker.UpdateDisplayUser(selectedClass);
+            if(isAIestimationOn){
+                selectedTracker.DisplayUserClass(selectedClass);
             }
             else{
-                selectedTracker.UpdateDisplayAI();
+                selectedTracker.DisplayAIEstimation();
             }
         }
     }
 
     void Update(){
         //if the AI estimation is the one displayed then update the displayed text in the ledger in case it changed
-        if(!AIEstimation){
-            UpdateDisplayedText();
+        /*
+        if(selectedTracker != null){
+            if(isAIestimationOn){
+                UpdateLedgerSelectedClassText();
+                UpdateLedgerSelectedClassSymbol();
+            }
         }
+        */
 
     }
 
@@ -235,21 +289,21 @@ public class LedgerUI : MonoBehaviour
             selectedTracker.isTrackerSelected = false;
         }
         selectedTracker = null;
-        UpdateDisplayedText();
-        UpdateDisplaySymbol();
-        UpdateDisplayAI();
+        UpdateLedgerSelectedClassText();
+        UpdateLedgerSelectedClassSymbol();
+        UpdateAITab();
         ChooseClassificationTab.SetActive(false);
     }
 
 
-    public void UpdateDisplaySymbol(){
+    public void UpdateLedgerSelectedClassSymbol(){
         SpriteRenderer spriteRenderer = displayedClassSymbol.GetComponent<SpriteRenderer>();
         if(selectedTracker != null){
             spriteRenderer.enabled = true;
             string spritePath = "trackSprites/" + displayedClass;
             Sprite newSprite = Resources.Load<Sprite>(spritePath);
             spriteRenderer.sprite = newSprite;
-            if(AIEstimation){
+            if(isAIestimationOn){
                 spriteRenderer.color = AIColor;
             }
             else{

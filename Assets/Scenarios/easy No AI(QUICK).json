@@ -2,7 +2,7 @@
   "scenarios": [
     {
       "id": "easy_no_AI",
-      "countdown": 900,
+      "countdown": 300,
       "AIType": "noAI",
       "noiseScalingFactor": 0.05,
       "numberEntities": 4,
