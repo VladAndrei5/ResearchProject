@@ -264,7 +264,7 @@
           "AI" : {
             "time" : [0, 10, 20,30],
             "classType" : ["ship", "pirate", "ship","ship"],
-            "confidence" : [90, 30, 60,90]
+            "confidence" : [90, 30, 60, 90]
           }
         },
         {

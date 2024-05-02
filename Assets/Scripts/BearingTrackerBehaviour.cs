@@ -115,7 +115,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
     private IEnumerator CheckAIUpdates()
     {
-        timeToReach = ( behaviourAI.time[counter] / 3);
+        timeToReach = behaviourAI.time[counter];
         if(timer <= timeToReach){
             timer += Time.deltaTime; // Increment the timer
             yield return null; // Wait for the next frame

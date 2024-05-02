@@ -214,7 +214,7 @@ public class PlotGenerator : MonoBehaviour
             }
         }
 
-        //add gausian instead of normal
+        //add gausian noise
         for (int i = 0; i < pixelsLineAmplitude.Length; i++){
             //adds gaussian white noise to a time sample in the bearing plot
             pixelsLineAmplitude[i] = pixelsLineAmplitude[i] + (scalingFactor * utilities.Gaussian(0f, utilities.calculateStandardDeviationNoiseBearing(frequencyNumberArr.Length)));
