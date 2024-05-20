@@ -9286,17 +9286,17 @@ MonoBehaviour:
   gradient:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
-    key3: {r: 0, g: 0, b: 0, a: 0}
+    key1: {r: 0.009242535, g: 0, b: 1, a: 1}
+    key2: {r: 0.99034953, g: 1, b: 0, a: 0}
+    key3: {r: 1, g: 0.13774192, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 65535
-    ctime2: 0
-    ctime3: 0
+    ctime1: 19707
+    ctime2: 46982
+    ctime3: 65535
     ctime4: 0
     ctime5: 0
     ctime6: 0
@@ -9311,7 +9311,7 @@ MonoBehaviour:
     atime7: 0
     m_Mode: 0
     m_ColorSpace: -1
-    m_NumColorKeys: 2
+    m_NumColorKeys: 4
     m_NumAlphaKeys: 2
   pixelsLineAmplitude: []
   spectrumAudioSource: []
@@ -14536,7 +14536,7 @@ MonoBehaviour:
   userColor: {r: 1, g: 0.9477787, b: 0, a: 0}
   AIColor: {r: 1, g: 1, b: 1, a: 0}
   selectedClass: 
-  AIEstimation: 0
+  isAIestimationOn: 0
   textDisplayedClass: {fileID: 1562172859}
   textAIClass: {fileID: 1132468535}
   textAIConfidence: {fileID: 491144588}
