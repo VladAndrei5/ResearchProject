@@ -56,7 +56,7 @@ public class SoundSourceBehaviour : MonoBehaviour
             float y =  movement.y[i];
             destination = new Vector2(x, y);
 
-            timeToReachDestination = movement.time[i] /3 - movement.time[i-1] / 3;
+            timeToReachDestination = movement.time[i] - movement.time[i-1];
 
             while (timer < timeToReachDestination)
             {
