@@ -3051,6 +3051,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 318791506}
+  - component: {fileID: 318791507}
   m_Layer: 0
   m_Name: AI Tab
   m_TagString: Untagged
@@ -3082,6 +3083,18 @@ Transform:
   - {fileID: 1132468534}
   m_Father: {fileID: 786093790}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &318791507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 318791505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce385dc7a8ae264498744288783a9a02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &342941773
 GameObject:
   m_ObjectHideFlags: 0
@@ -8503,6 +8516,50 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1171882836
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1171882838}
+  - component: {fileID: 1171882837}
+  m_Layer: 0
+  m_Name: TabManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1171882837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171882836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50afdb861ae2caf498aa6988372a5ee0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1171882838
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171882836}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.6631713, y: 9.846984, z: -1.638982}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1177659626
 GameObject:
   m_ObjectHideFlags: 0
@@ -10898,7 +10955,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   newSprite: {fileID: 21300000, guid: 8fcc53cc9526b9e4bbdf0ffffce22be4, type: 3}
-  ledgerUI: {fileID: 2115084417}
+  ledgerUI: {fileID: 0}
 --- !u!61 &1445184082
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -14500,71 +14557,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &2115084416
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2115084418}
-  - component: {fileID: 2115084417}
-  m_Layer: 0
-  m_Name: LedgerUI
-  m_TagString: LedgerUI
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2115084417
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2115084416}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66d6df74884c07f40bcdfc8119911a51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  displayedAIConfidence: 0
-  displayedAIClass: 
-  displayedClass: 
-  displayedClassSymbol: {fileID: 422258204}
-  userColor: {r: 1, g: 0.9477787, b: 0, a: 0}
-  AIColor: {r: 1, g: 1, b: 1, a: 0}
-  selectedClass: 
-  isAIestimationOn: 0
-  textDisplayedClass: {fileID: 1562172859}
-  textAIClass: {fileID: 1132468535}
-  textAIConfidence: {fileID: 491144588}
-  textCurrentScore: {fileID: 498794807}
-  shipToggle: {fileID: 1991078023}
-  pirateToggle: {fileID: 1250641030}
-  seaLifeToggle: {fileID: 1490072313}
-  unknownToggle: {fileID: 1549718087}
-  AIEstimationToggle: {fileID: 1372958850}
-  selectedTracker: {fileID: 0}
-  persistentData: {fileID: 0}
-  AITab: {fileID: 318791505}
-  ChooseClassificationTab: {fileID: 151602076}
---- !u!4 &2115084418
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2115084416}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2130730179
 GameObject:
   m_ObjectHideFlags: 0
@@ -14670,5 +14662,5 @@ SceneRoots:
   - {fileID: 369461039}
   - {fileID: 493780531}
   - {fileID: 1750005801}
-  - {fileID: 2115084418}
   - {fileID: 80010127}
+  - {fileID: 1171882838}

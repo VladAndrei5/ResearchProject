@@ -12,7 +12,6 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public SoundSourceBehaviour soundSourcePair;
     public float AIEstimationConfidence;
     public string AIEstimationClass;
-    public string userClass;
     public bool isTrackerSelected;
 
     public bool isTrackerCaptured;
@@ -30,7 +29,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
 
     //references to classes
-    public LedgerUI ledgerUI;
+    public TabsUI tabsUI;
     public Utilities utilities;
 
 
@@ -63,7 +62,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
         //create ledger reference
         GameObject ledgerOBJ = GameObject.FindWithTag("LedgerUI");
-        ledgerUI = ledgerOBJ.GetComponent<LedgerUI>();
+        tabsUI = ledgerOBJ.GetComponent<LedgerUI>();
 
         counter = 0;
         UpdateAIEstimation();
@@ -94,7 +93,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
                     if(isSoundSourceActive){
                         Debug.Log("Pressed");
                         //if the tracker was pressed, then it tells the ledger that this script instance is the one selected
-                        ledgerUI.SelectTracker(this);
+                        tabsUI.SelectTracker(this);
                         isTrackerSelected = true;
                     }
                 }
@@ -148,9 +147,9 @@ public class BearingTrackerBehaviour : MonoBehaviour
         }
         
         if(isTrackerSelected){
-            ledgerUI.UpdateLedgerSelectedClassText();
-            ledgerUI.UpdateLedgerSelectedClassSymbol();
-            ledgerUI.UpdateAITab();
+            tabsUI.UpdateLedgerSelectedClassText();
+            tabsUI.UpdateLedgerSelectedClassSymbol();
+            tabsUI.UpdateAITab();
         }
         
 
@@ -163,9 +162,9 @@ public class BearingTrackerBehaviour : MonoBehaviour
         UpdateDisplaySymbol();
         
         if(isTrackerSelected){
-            ledgerUI.UpdateLedgerSelectedClassText();
-            ledgerUI.UpdateLedgerSelectedClassSymbol();
-            ledgerUI.UpdateAITab();
+            tabsUI.UpdateLedgerSelectedClassText();
+            tabsUI.UpdateLedgerSelectedClassSymbol();
+            tabsUI.UpdateAITab();
         }
         
     }
@@ -197,7 +196,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public void Capture(){
         if(isSoundSourceActive){
             if(isTrackerSelected){
-                ledgerUI.Unselect();
+                tabsUI.Unselect();
                 isTrackerSelected = false;
             }
             float timeCaptured = 25f;

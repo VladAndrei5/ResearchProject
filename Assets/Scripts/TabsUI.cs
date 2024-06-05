@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class LedgerUI : MonoBehaviour
+public class TabsUI : MonoBehaviour
 {
     //Displayed on the UI what the AI think
     public float displayedAIConfidence;
