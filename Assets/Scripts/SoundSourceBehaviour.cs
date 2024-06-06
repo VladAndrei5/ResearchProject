@@ -14,6 +14,13 @@ public class SoundSourceBehaviour : MonoBehaviour
     public Vector2 initialPosition;
     public float timeToReachDestination;
 
+    public float speed = 5f;
+    private Vector2 direction;
+    private float timeToChangeDirection;
+    private float changeDirectionIntervalMin = 1f; // Minimum time to change direction
+    private float changeDirectionIntervalMax = 5f; // Maximum time to change direction
+
+
     public void UpdateAudioFilePlaying(string audioFileName){
         string audioPath = "Sounds/" + audioFileName;
         AudioClip clip = Resources.Load<AudioClip>(audioPath);
@@ -44,11 +51,37 @@ public class SoundSourceBehaviour : MonoBehaviour
             StartCoroutine(MoveToDestination());
         }
     }
-    
-    
 
+    void Update()
+    {
+        // Move the object towards the direction vector
+        transform.Translate(direction * speed * Time.deltaTime);
+    }
+
+    private Vector2 GetRandomDirection()
+    {
+        // Generate a random direction
+        float angle = Random.Range(0f, 360f);
+        return new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
+    }
+    
+    
     private IEnumerator MoveToDestination()
     {
+        direction = GetRandomDirection();
+
+        while (true)
+        {
+            // Wait for a random time between the defined intervals
+            timeToChangeDirection = Random.Range(changeDirectionIntervalMin, changeDirectionIntervalMax);
+            yield return new WaitForSeconds(timeToChangeDirection);
+            
+            // Change direction
+            direction = GetRandomDirection();
+        }
+
+
+        /*
         for(int i = 1; i < movement.time.Length; i++){
             timer = 0f;
             initialPosition = transform.position;
@@ -69,6 +102,7 @@ public class SoundSourceBehaviour : MonoBehaviour
 
             yield return null;
         }        
+        */
     }
 
     public void Capture(float timeCaptured){
@@ -96,4 +130,9 @@ public class SoundSourceBehaviour : MonoBehaviour
         return gameObject;
     }
     
+    public float[] RetrieveSpectrumData(){
+        float[] spectrumAudioSource = new float[64];
+        GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
+        return spectrumAudioSource;
+    }
 }

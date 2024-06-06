@@ -5,28 +5,35 @@ using UnityEngine;
 
 public class BearingTrackerBehaviour : MonoBehaviour
 {
+
+
+    //strings
     public string realClass;
-    public AI behaviourAI;
-    public float timer = 0f;
-    public float timeToReach;
-    public SoundSourceBehaviour soundSourcePair;
-    public float AIEstimationConfidence;
     public string AIEstimationClass;
     public string userClass;
+    public string displayedClass;
+    public string id;
+
+    //float
+    public float timer = 0f;
+    public float isProducingSoundProgressTimer = 0f;
+    public float timeToReach;
+    public float AIEstimationConfidence;
+    public float totalVolume;
+    public int counter;
 
     //flags
     public bool isTrackerSelected;
     public bool isTrackerCaptured;
     public bool isAIactive;
     public bool isSoundSourceActive;
-
     public bool isTrackerAvailable;
+    public bool isProducingSound;
+    public bool isProducingSoundProgress;
 
-
-    public string displayedClass;
+    //other
     private SpriteRenderer spriteRenderer;
     public Sprite newSprite;
-    public int counter;
     public Color userColor;
     public Color AIColor;
 
@@ -34,6 +41,8 @@ public class BearingTrackerBehaviour : MonoBehaviour
     //references to classes
     public LedgerUI ledgerUI;
     public Utilities utilities;
+    public SoundSourceBehaviour soundSourcePair;
+    public AI behaviourAI;
 
 
     public void ToggleTrackerOutline(bool isEnabled){
@@ -41,7 +50,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
         child.GetComponent<SpriteRenderer>().enabled = isEnabled;
     }
 
-    public void InitaliseBehaviour(string realClass, AI behaviourAI, SoundSourceBehaviour audioSource){
+    public void InitaliseBehaviour(string realClass, AI behaviourAI, SoundSourceBehaviour audioSource, string id){
 
         //
         GameObject obj = GameObject.FindWithTag("Utilities");
@@ -51,12 +60,15 @@ public class BearingTrackerBehaviour : MonoBehaviour
         this.behaviourAI = behaviourAI;
         this.realClass = realClass;
         this.soundSourcePair = audioSource;
+        this.id = id;
         //this.isAIactive = isAIactive;
 
         //keeps track if the user overrides the AI estimation
         isTrackerSelected = false;
         isSoundSourceActive = true;
         isAIactive = true;
+        isProducingSound = false;
+        isProducingSoundProgress = false;
 
         //set up sprite renderer and colours of trackers
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -80,8 +92,8 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
     }
 
-     void Update()
-    {
+     void Update(){
+        //check if the tracker is clicked and inform the TabManager
         if (Input.GetMouseButtonDown(0)) // if mouse is down
         {
             // Cast a ray from the mouse position into the scene
@@ -93,7 +105,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
                 // Check if the hit collider belongs to this GameObject
                 if (hit.collider.gameObject == gameObject)
                 {
-                    if(isSoundSourceActive){
+                    if(isSoundSourceActive && isProducingSound){
                         Debug.Log("Pressed");
                         //if the tracker was pressed, then it tells the ledger that this script instance is the one selected
                         ledgerUI.SelectTracker(this);
@@ -102,9 +114,79 @@ public class BearingTrackerBehaviour : MonoBehaviour
                 }
             }
         }
+
         StartCoroutine(CheckAIUpdates());
+        StartCoroutine(CheckSoundLevels());
+        StartCoroutine(CheckVisibility());
         UpdatePosition(soundSourcePair.getGameObject()); // always update its position
     }
+
+    private IEnumerator CheckVisibility(){
+        if(isProducingSound && isSoundSourceActive && !isTrackerCaptured && displayedClass != "none" ){
+            TurnOnTracker();
+        }
+        else{
+            TurnOffTracker();
+        }
+        yield return null;
+
+    }
+
+    private IEnumerator CheckSoundLevels(){
+        //checking the dB levles
+        float[] spectrumAudioSource = new float[64];
+        spectrumAudioSource = soundSourcePair.RetrieveSpectrumData();
+        float totalAmplitude = 0f;
+        for(int i = 0; i < 64; i++){
+            totalAmplitude = spectrumAudioSource[i] + totalAmplitude;
+        }
+        totalVolume = utilities.convertToDecebels(totalAmplitude);
+
+        //creating the flip
+        if(isProducingSound){
+            if(totalVolume < -60f){
+                isProducingSoundProgressTimer += Time.deltaTime;
+                if(isProducingSoundProgressTimer >= 2f){
+                    isProducingSound = false;
+                    isProducingSoundProgressTimer = 0f;
+                }
+                //TurnOffTracker();
+            }
+        }
+        else{
+            if(totalVolume > -55f){
+                isProducingSoundProgressTimer += Time.deltaTime;
+                if(isProducingSoundProgressTimer >= 2f){
+                    isProducingSound = true;
+                    isProducingSoundProgressTimer = 0f;
+                }
+                //TurnOnTracker();
+            }
+        }
+        
+        yield return null;
+
+    }
+
+    private void TurnOffTracker()
+    {
+        GetComponent<SpriteRenderer>().enabled = false;
+        if(id == "2"){
+            Debug.Log("off");
+        }
+
+    }
+
+    private void TurnOnTracker()
+    {
+        GetComponent<SpriteRenderer>().enabled = true;
+        if(id == "2"){
+            Debug.Log("on");
+        }
+    }
+
+
+
 
     public void UpdatePosition(GameObject soundSource){
         float soundRot = utilities.getSoundSourceAngle(soundSource);
@@ -115,8 +197,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
     }
 
 
-    private IEnumerator CheckAIUpdates()
-    {
+    private IEnumerator CheckAIUpdates(){
         timeToReach = behaviourAI.time[counter];
         if(timer <= timeToReach){
             timer += Time.deltaTime; // Increment the timer
@@ -180,20 +261,20 @@ public class BearingTrackerBehaviour : MonoBehaviour
         }
 
         if(displayedClass == "none"){
-            spriteRenderer.enabled = false;
+            return;
+        }
+        
+        spriteRenderer.enabled = true;
+        string spritePath = "trackSprites/" + displayedClass;
+        newSprite = Resources.Load<Sprite>(spritePath);
+        spriteRenderer.sprite = newSprite;
+        if(isAIactive){
+            spriteRenderer.color = AIColor;
         }
         else{
-            spriteRenderer.enabled = true;
-            string spritePath = "trackSprites/" + displayedClass;
-            newSprite = Resources.Load<Sprite>(spritePath);
-            spriteRenderer.sprite = newSprite;
-            if(isAIactive){
-                spriteRenderer.color = AIColor;
-            }
-            else{
-                spriteRenderer.color = userColor;
-            }
+            spriteRenderer.color = userColor;
         }
+        
     }
 
     public void Capture(){
@@ -223,7 +304,6 @@ public class BearingTrackerBehaviour : MonoBehaviour
         isAIactive = true;
         DisplayAIEstimation();
         //CheckVisibility(soundSourcePair.getGameObject());
-
     }
     
     public string getRealClass(){

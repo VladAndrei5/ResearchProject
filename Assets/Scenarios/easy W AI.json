@@ -8,7 +8,7 @@
       "numberEntities": 4,
       "entities": [
         {
-        "id": "pirate",
+        "id": "1",
           "audio": "sonar_ping_extended_sim",
           "realClass": "pirate",
           "movement": {
@@ -89,7 +89,7 @@
           }
         },
         {
-          "id": "passenger_ship_entity_1",
+          "id": "2",
           "audio": "extended_passengership_1_sim",
           "realClass": "ship",
           "captureReward" : -10,
@@ -171,7 +171,7 @@
           }
         },
         {
-          "id": "passenger_ship_entity_2",
+          "id": "3",
           "audio": "extended_passengership_2_sim",
           "realClass": "ship",
           "captureReward" : -10,
@@ -268,7 +268,7 @@
           }
         },
         {
-          "id": "seaLife_entity_1",
+          "id": "4",
           "audio": "North_Atlantic_Right_Whale_scream_extended_sim",
           "realClass": "seaLife",
           "captureReward" : -10,

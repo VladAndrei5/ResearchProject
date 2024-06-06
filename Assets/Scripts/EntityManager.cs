@@ -74,7 +74,7 @@ public class EntityManager : MonoBehaviour
         bearingTracker.transform.localRotation = Quaternion.Euler(localRotation);
         bearingTracker.transform.localScale = localScale;
         //Initalise its behaviour
-        bearingTracker.GetComponent<BearingTrackerBehaviour>().InitaliseBehaviour(realClass, behaviourAI, audioSource.GetComponent<SoundSourceBehaviour>());
+        bearingTracker.GetComponent<BearingTrackerBehaviour>().InitaliseBehaviour(realClass, behaviourAI, audioSource.GetComponent<SoundSourceBehaviour>(), id);
     }
 
 /*
