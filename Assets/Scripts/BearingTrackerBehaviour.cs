@@ -13,12 +13,14 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public float AIEstimationConfidence;
     public string AIEstimationClass;
     public string userClass;
-    public bool isTrackerSelected;
 
+    //flags
+    public bool isTrackerSelected;
     public bool isTrackerCaptured;
     public bool isAIactive;
-
     public bool isSoundSourceActive;
+
+    public bool isTrackerAvailable;
 
 
     public string displayedClass;

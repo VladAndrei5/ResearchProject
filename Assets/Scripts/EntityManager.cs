@@ -133,6 +133,10 @@ public class EntityManager : MonoBehaviour
         */
     }
 
+    public GameObject getSoundSourceObj(int i){
+        return audioSourcesObjArray[i];
+    }
+
     public GameObject[] getSoundSourcesArray(){
         return audioSourcesObjArray;
     }
