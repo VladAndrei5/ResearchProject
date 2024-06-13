@@ -1901,6 +1901,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 232464296}
   m_CullTransparentMesh: 1
+--- !u!1 &233611080
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 233611082}
+  - component: {fileID: 233611081}
+  m_Layer: 0
+  m_Name: PersistentData
+  m_TagString: PersistentData
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &233611081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 233611080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45f3ad5fdd6c05449a46c8fabb49389a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jsonScenariosFile: {fileID: 4900000, guid: f9aa4fbdc890da74db07a22bf94a18a6, type: 3}
+  scenarioData:
+    scenarios: []
+  currentScenarioNumb: 0
+  currentScore: 0
+--- !u!4 &233611082
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 233611080}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &241015791
 GameObject:
   m_ObjectHideFlags: 0
@@ -4221,8 +4270,8 @@ MonoBehaviour:
   timerText: {fileID: 468591197}
   spotlight1: {fileID: 693844742}
   spotlight2: {fileID: 241015793}
-  persistentData: {fileID: 0}
-  levelManager: {fileID: 0}
+  persistentData: {fileID: 233611081}
+  levelManager: {fileID: 1332201611}
   nextLevelPanel: {fileID: 1569713599}
   endScreenPanel: {fileID: 8364550}
 --- !u!4 &493780531
@@ -5624,6 +5673,7 @@ MonoBehaviour:
   ParentBearingTrackers: {fileID: 1636208323}
   ParentAudioSources: {fileID: 1894374585}
   persistentData: {fileID: 0}
+  utilities: {fileID: 0}
   audioSourcesObjArray: []
   foundObjects: []
   bearingTrackersArray: []
@@ -9771,6 +9821,59 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1332201610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1332201612}
+  - component: {fileID: 1332201611}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: LevelManager
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1332201611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332201610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab6d80b7b983a943b0c4b41b510439f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  persistentData: {fileID: 233611081}
+  currentScenarioData:
+    id: 
+    countdown: 0
+    AIType: 
+    noiseScalingFactor: 0
+    numberEntities: 0
+    entities: []
+  entityManager: {fileID: 0}
+--- !u!4 &1332201612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332201610}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1342192733
 GameObject:
   m_ObjectHideFlags: 0
@@ -14672,3 +14775,5 @@ SceneRoots:
   - {fileID: 1750005801}
   - {fileID: 2115084418}
   - {fileID: 80010127}
+  - {fileID: 233611082}
+  - {fileID: 1332201612}

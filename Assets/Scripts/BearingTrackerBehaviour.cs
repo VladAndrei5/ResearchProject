@@ -171,18 +171,12 @@ public class BearingTrackerBehaviour : MonoBehaviour
     private void TurnOffTracker()
     {
         GetComponent<SpriteRenderer>().enabled = false;
-        if(id == "2"){
-            Debug.Log("off");
-        }
 
     }
 
     private void TurnOnTracker()
     {
         GetComponent<SpriteRenderer>().enabled = true;
-        if(id == "2"){
-            Debug.Log("on");
-        }
     }
 
 

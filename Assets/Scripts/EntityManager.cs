@@ -24,6 +24,7 @@ public class EntityManager : MonoBehaviour
     
     //public GameObject[] soundSourcesArray;
     public PersistentData persistentData;
+    public Utilities utilities;
 
     public GameObject[] audioSourcesObjArray;
     public GameObject[] foundObjects;
@@ -40,7 +41,16 @@ public class EntityManager : MonoBehaviour
     void Awake(){
         GameObject persistentDataOBJ = GameObject.FindWithTag("PersistentData");
         persistentData = persistentDataOBJ.GetComponent<PersistentData>();
-        PopulateEntities(persistentData.GetCurrentScenarioData());
+
+        GameObject utilitiesOBJ = GameObject.FindWithTag("Utilities");
+        utilities = utilitiesOBJ.GetComponent<Utilities>();
+
+        //float randomNumb = utilities.GenerateRandomNumber();
+        //Debug.Log(randomNumb);
+
+        CreateInitialEntities(persistentData.GetCurrentScenarioData());
+
+        //PopulateEntities(persistentData.GetCurrentScenarioData());
     }
 
     //spawns all the audio sources
@@ -99,6 +109,28 @@ public class EntityManager : MonoBehaviour
     /*creates the various trackers and sound sources game objects
     and their behaviours from a given scenario
     */
+
+
+    public void CreateInitialEntities(Scenario scenario){
+        int numberOfEntities = utilities.GenerateRandomNumber(5, 1, 1, 10);
+
+        for(int i = 0; i < numberOfEntities; i++){
+            //take audio file name from scenarioData
+            audioFile = scenario.entities[i].audio;
+            //same for classType
+            realClass = scenario.entities[i].realClass;
+            id = scenario.entities[i].id;
+            movement = scenario.entities[i].movement;
+            behaviourAI = scenario.entities[i].AI;
+            //spawns all the prefabs;
+            GameObject audioSource = SpawnPrefabsAudioSource(audioFile, id, movement);
+            //SpawnPrefabsMapTrackers();
+            SpawnPrefabsBearingTracker(audioSource);
+        }
+
+
+    }
+
     public void PopulateEntities(Scenario scenario){
         //get the number of entities in first scenario
         int numberOfEntities = scenario.numberEntities;

@@ -46,6 +46,8 @@ public class Utilities : MonoBehaviour
     //array which simply holds the angles of all the soundsources
     float[] angleArray;
 
+    int seed = 45;
+
     private static float[] erfInverseTableInput = new float[]
     {
         -2.0f, -1.9f, -1.8f, -1.7f, -1.6f, -1.5f, -1.4f, -1.3f, -1.2f, -1.1f, -1.0f,
@@ -63,6 +65,9 @@ public class Utilities : MonoBehaviour
     };
 
     void Start(){
+        //set the seed for random number generator
+        Random.InitState(seed);
+        
         soundSourcesArr = entityManager.getSoundSourcesArray();
         relativeAngleArray = new float[soundSourcesArr.Length];
         angleArray = new float[soundSourcesArr.Length];
@@ -268,6 +273,18 @@ public class Utilities : MonoBehaviour
     public int Remap(float x, float in_min, float in_max, float out_min, float out_max)
     {
         return (int)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-    }   
+    }
+
+    //generates a random number from a normal distribution
+    public float GenerateRandomNumber(float mean, float standardDeviation, float minimum, float maximum) {
+        Random.InitState(seed);
+        float randomNumber = mean + standardDeviation * Mathf.Sqrt(-2f * Mathf.Log(Random.value)) * Mathf.Sin(2f * Mathf.PI * Random.value);
+        
+        // Clamp the random number within the specified range
+        randomNumber = Mathf.Clamp(randomNumber, minimum, maximum);
+
+        return randomNumber;
+    }
+
 
 }
