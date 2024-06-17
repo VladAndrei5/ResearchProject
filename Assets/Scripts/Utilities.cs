@@ -276,7 +276,13 @@ public class Utilities : MonoBehaviour
     }
 
     //generates a random number from a normal distribution
-    public float GenerateRandomNumber(float mean, float standardDeviation, float minimum, float maximum) {
+    public float GenerateRandomNumber(float[] distribution) {
+
+        distribution[0] = mean;
+        distribution[1] = standardDeviation;
+        distribution[2] = minimum;
+        distribution[3] = maximum;
+        
         Random.InitState(seed);
         float randomNumber = mean + standardDeviation * Mathf.Sqrt(-2f * Mathf.Log(Random.value)) * Mathf.Sin(2f * Mathf.PI * Random.value);
         

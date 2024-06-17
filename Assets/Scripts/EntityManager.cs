@@ -87,50 +87,29 @@ public class EntityManager : MonoBehaviour
         bearingTracker.GetComponent<BearingTrackerBehaviour>().InitaliseBehaviour(realClass, audioSource.GetComponent<SoundSourceBehaviour>(), id);
     }
 
-/*
-    //spawns all the map trackers
-    private void SpawnPrefabsMapTrackers(){
-        Vector3 localPosition = Vector3.zero; // Local position of the spawned prefabs relative to the parentObject
-        Vector3 localRotation = Vector3.zero; // Local rotation of the spawned prefabs relative to the parentObject
-        Vector3 localScale = Vector3.one;
 
-        localPosition = Vector3.zero;
-        localScale = new Vector3(4.5f, 4.5f, 1f);
+    public void CreateInitialEntities(){
+        //int numberOfEntities = utilities.GenerateRandomNumber(utilities.initialNumberOfEntitiesDistribution);
 
-        //Initalise map tracker
-        GameObject mapTracker = Instantiate(PrefabMapTracker, ParentMapTrackers.transform);
-        mapTracker.transform.localPosition = localPosition;
-        mapTracker.transform.localScale = localScale;
-        //Initalise its behaviour
-        mapTracker.GetComponent<EntityBehaviour>().InitaliseBehaviour(audioFile, classType, id, movementArray, AIBehaviourArray);
-    }
-*/
-
-    /*creates the various trackers and sound sources game objects
-    and their behaviours from a given scenario
-    */
-
-
-    public void CreateInitialEntities(Scenario scenario){
-        int numberOfEntities = utilities.GenerateRandomNumber(5, 1, 1, 10);
-
-        for(int i = 0; i < numberOfEntities; i++){
-            //take audio file name from scenarioData
-            audioFile = "extended_passengership_1_sim";
-            //same for classType
-            realClass = "ship";
-            id = "11";
-            //movement = scenario.entities[i].movement;
-            //behaviourAI = scenario.entities[i].AI;
-            //spawns all the prefabs;
-            GameObject audioSource = SpawnPrefabsAudioSource(audioFile, id);
-            //SpawnPrefabsMapTrackers();
-            SpawnPrefabsBearingTracker(audioSource);
+        //go through all classes
+        for(int j = 0; j < persistentData.classes.Length; j++){
+            for(int i = 0; i < 2; i++){
+                //given a class, choose a random audio file belonging to that class
+                audioFile = ChooseAudioFile(persistentData.classes[j]);
+                realClass = persistentData.classes[j];
+                id = "11";
+                //spawns all the prefabs;
+                GameObject audioSource = SpawnPrefabsAudioSource(audioFile, id);
+                SpawnPrefabsBearingTracker(audioSource);
+            }
         }
-
-
     }
 
+    public void ChooseAudioFile(string classType){
+        
+    }
+
+    /*
     public void PopulateEntities(Scenario scenario){
         //get the number of entities in first scenario
         int numberOfEntities = scenario.numberEntities;
@@ -153,7 +132,7 @@ public class EntityManager : MonoBehaviour
         foundObjects = GameObject.FindGameObjectsWithTag("AudioSourceObj");
         audioSourcesObjArray = new GameObject[foundObjects.Length];
         audioSourcesObjArray = foundObjects;
-        /*
+        
         Utilities.Instance.CopyArray(audioSourcesObjArray, foundObjects);
 
         foundObjects = GameObject.FindGameObjectsWithTag("BTrackers");
@@ -162,8 +141,9 @@ public class EntityManager : MonoBehaviour
         for (int i = 0; i < foundObjects.Length; i++){
             bearingTrackersArray[i] = foundObjects[i].GetComponent<BearingTrackerBehaviour>();
         }
-        */
+        
     }
+    */
 
     public GameObject getSoundSourceObj(int i){
         return audioSourcesObjArray[i];

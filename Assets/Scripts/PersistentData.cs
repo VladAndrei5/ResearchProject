@@ -17,6 +17,24 @@ public class PersistentData : MonoBehaviour
     private string scoreFileName = "scoreFile.txt";
 
 
+    public float shipSpawnRate;
+    public float seaLifeSpawnRate;
+    public float pirateSpawnRate;
+
+    public string[] classes = new string[] {"ship" , "seaLife" , "pirate" , "unknown"};
+
+    public string[] audioFileShip = new string[] {"extended_passengership_1_sim" , "extended_passengership_2_sim"};
+    public string[] audioFilePirate = new string[] {"sonar_ping_extended_sim"};
+    public string[] audioFileSeaLife = new string[] {"North_Atlantic_Right_Whale_scream_extended_sim"};
+
+    //normal distribution for initial number of entities
+    public float[] initialNumberOfEntitiesDistribution =  new float[] { 5f, 1f, 1f, 10f };
+
+    //the time distriubiton until a new entity of class ship is spawned
+    public float[] shipSpawnProbabilityDistributuion = new float[] { 5f, 1f, 1f, 10f };
+
+
+
     //public TextAsset SaveScoreFile;
 
     void Awake()

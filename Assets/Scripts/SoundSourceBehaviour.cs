@@ -8,7 +8,6 @@ public class SoundSourceBehaviour : MonoBehaviour
 
     public string audioFile;
     public string id;
-    public Movement movement;
     public float timer = 0f;
     public Vector2 destination;
     public Vector2 initialPosition;
@@ -20,6 +19,8 @@ public class SoundSourceBehaviour : MonoBehaviour
     private float changeDirectionIntervalMin = 1f; // Minimum time to change direction
     private float changeDirectionIntervalMax = 5f; // Maximum time to change direction
 
+    public PersistentData persistentData;
+
 
     public void UpdateAudioFilePlaying(string audioFileName){
         string audioPath = "Sounds/" + audioFileName;
@@ -30,10 +31,9 @@ public class SoundSourceBehaviour : MonoBehaviour
         audioSource.Play();
     }
 
-    public void InitaliseBehaviour(string audioFile, string id, Movement movement){
+    public void InitaliseBehaviour(string audioFile, string id){
         this.id = id;
         this.audioFile = audioFile;
-        this.movement = movement;
 
         //find the path to sound file and play the sound
         UpdateAudioFilePlaying(audioFile);
