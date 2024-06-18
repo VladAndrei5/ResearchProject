@@ -32,29 +32,22 @@ public class EntityManager : MonoBehaviour
 
     private Movement movement;
     private AI behaviourAI;
-    string audioFile;
+    string audioClip;
     string realClass;
     string id;
+
+    public float timer;
 
 
 
     void Awake(){
-        GameObject persistentDataOBJ = GameObject.FindWithTag("PersistentData");
-        persistentData = persistentDataOBJ.GetComponent<PersistentData>();
-
-        GameObject utilitiesOBJ = GameObject.FindWithTag("Utilities");
-        utilities = utilitiesOBJ.GetComponent<Utilities>();
-
-        //float randomNumb = utilities.GenerateRandomNumber();
-        //Debug.Log(randomNumb);
-
+        Random.InitState(persistentData.seedRandom);
         CreateInitialEntities();
-
-        //PopulateEntities(persistentData.GetCurrentScenarioData());
+        StartCoroutine(MoveToDestination());
     }
 
     //spawns all the audio sources
-    private GameObject SpawnPrefabsAudioSource(string audioFile, string id){
+    private GameObject SpawnPrefabsAudioSource(AudioClip audioClip, string id){
         Vector3 localPosition = Vector3.zero; // Local position of the spawned prefabs relative to the parentObject
         Vector3 localRotation = Vector3.zero; // Local rotation of the spawned prefabs relative to the parentObject
         Vector3 localScale = Vector3.one;
@@ -63,7 +56,7 @@ public class EntityManager : MonoBehaviour
         GameObject audioSource = Instantiate(PrefabAudioSource, ParentAudioSources.transform);
         audioSource.transform.localPosition = localPosition;
         //Initalise its behaviour
-        audioSource.GetComponent<SoundSourceBehaviour>().InitaliseBehaviour(audioFile, id);
+        audioSource.GetComponent<SoundSourceBehaviour>().InitaliseBehaviour(audioClip, id);
         return audioSource;
     }
 
@@ -90,24 +83,72 @@ public class EntityManager : MonoBehaviour
 
     public void CreateInitialEntities(){
         //int numberOfEntities = utilities.GenerateRandomNumber(utilities.initialNumberOfEntitiesDistribution);
-
         //go through all classes
-        for(int j = 0; j < persistentData.classes.Length; j++){
+        //except last class which is unknown class
+        for(int j = 0; j < persistentData.classes.Length - 1; j++){
+            //here we should perhaps generate the initial number of entities to be spawned depnding on the class
+            //for now keep it 2 for each
             for(int i = 0; i < 2; i++){
-                //given a class, choose a random audio file belonging to that class
-                audioFile = ChooseAudioFile(persistentData.classes[j]);
-                realClass = persistentData.classes[j];
-                id = "11";
-                //spawns all the prefabs;
-                GameObject audioSource = SpawnPrefabsAudioSource(audioFile, id);
-                SpawnPrefabsBearingTracker(audioSource);
+                string classType = persistentData.classes[j];
+                SpawnEntity(classType);
             }
         }
     }
 
-    public void ChooseAudioFile(string classType){
+    private void SpawnEntity(string classType){
+        AudioClip audioClip = ChooseAudioClip(classType);
+        realClass = classType;
+        id = "11";
+        //spawns all the prefabs;
+        GameObject audioSource = SpawnPrefabsAudioSource(audioClip, id);
+        SpawnPrefabsBearingTracker(audioSource);
         
+
     }
+
+    private AudioClip ChooseAudioClip(string classType)
+    {
+        string folderPath = "Sounds/" + classType;
+        AudioClip[] audioClips = Resources.LoadAll<AudioClip>(classType);
+        if (audioClips.Length > 0)
+        {
+            int randomIndex = Random.Range(0, audioClips.Length);
+            return audioClips[randomIndex];
+        }
+        return null;
+    }
+
+    private IEnumerator SpawnEntities()
+    {
+        timer = 0f;
+
+        float[] interval = new float[persistentData.classes.Length];
+        for(int i = 0; i < persistentData.classes.Length - 1; i ++){
+            interval[i] = utilities.GenerateRandomNumber(persistentData.classesSpawnRate[persistentData.classes[i]]);
+        }
+
+        while(true){
+
+            for(int j = 0; j < persistentData.classes.Length - 1; j++){
+
+                if(timer > interval[j]){
+                    string classType = persistentData.classes[j];
+                    SpawnEntity(classType);
+                    interval[j] = utilities.GenerateRandomNumber(persistentData.classesSpawnRate[persistentData.classes[j]]);
+                }
+
+                yield return null;
+            }
+            
+            yield return new WaitForSeconds(1f);
+        }
+
+    }
+
+    void Update(){
+        timer += Time.deltaTime;
+    }
+
 
     /*
     public void PopulateEntities(Scenario scenario){
@@ -117,14 +158,14 @@ public class EntityManager : MonoBehaviour
         //for each entity it spawns its audio source and trackers
         for(int i = 0; i < numberOfEntities; i++){
             //take audio file name from scenarioData
-            audioFile = scenario.entities[i].audio;
+            audioClip = scenario.entities[i].audio;
             //same for classType
             realClass = scenario.entities[i].realClass;
             id = scenario.entities[i].id;
             movement = scenario.entities[i].movement;
             behaviourAI = scenario.entities[i].AI;
             //spawns all the prefabs;
-            GameObject audioSource = SpawnPrefabsAudioSource(audioFile, id, movement);
+            GameObject audioSource = SpawnPrefabsAudioSource(audioClip, id, movement);
             //SpawnPrefabsMapTrackers();
             SpawnPrefabsBearingTracker(audioSource);
         }

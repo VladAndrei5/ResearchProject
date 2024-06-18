@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Random=UnityEngine.Random;
 
 public class SoundSourceBehaviour : MonoBehaviour
 {
@@ -16,36 +17,36 @@ public class SoundSourceBehaviour : MonoBehaviour
     public float speed = 5f;
     private Vector2 direction;
     private float timeToChangeDirection;
-    private float changeDirectionIntervalMin = 1f; // Minimum time to change direction
-    private float changeDirectionIntervalMax = 5f; // Maximum time to change direction
-
+   
     public PersistentData persistentData;
+    public EntityManager entityManager;
 
-
-    public void UpdateAudioFilePlaying(string audioFileName){
-        string audioPath = "Sounds/" + audioFileName;
-        AudioClip clip = Resources.Load<AudioClip>(audioPath);
-
+    
+    public void UpdateAudioFilePlaying(AudioClip audioClip){
+        //string audioPath = "Sounds/" + audioFileName;
+        //AudioClip clip = Resources.Load<AudioClip>(audioPath);
+        Random.InitState(persistentData.seedRandom);
         AudioSource audioSource = this.GetComponent<AudioSource>();
-        audioSource.clip = clip;
+        audioSource.clip = audioClip;
         audioSource.Play();
     }
+    
 
-    public void InitaliseBehaviour(string audioFile, string id){
+    public void InitaliseBehaviour(AudioClip audioClip, string id){
         this.id = id;
-        this.audioFile = audioFile;
 
-        //find the path to sound file and play the sound
-        UpdateAudioFilePlaying(audioFile);
+        // play the sound
+        UpdateAudioFilePlaying(audioClip);
     }
 
     // Update is called once per frame
     void Start()
     {
         if(id != null){
+            direction = GetRandomDirection();
             timer = 0f;
-            float x = movement.x[0];
-            float y = movement.y[0];
+            float x = Random.Range(-50f, 50f);
+            float y = Random.Range(-50f, 50f);
             initialPosition = new Vector2(x, y);
             transform.position = initialPosition;
             StartCoroutine(MoveToDestination());
@@ -56,6 +57,10 @@ public class SoundSourceBehaviour : MonoBehaviour
     {
         // Move the object towards the direction vector
         transform.Translate(direction * speed * Time.deltaTime);
+        //if no sound is playing then play some
+        if(!GetComponent<AudioSource>().isPlaying){
+            UpdateAudioFilePlaying(entityManager.ChooseAudioClip(realClass));
+        }
     }
 
     private Vector2 GetRandomDirection()
@@ -68,42 +73,17 @@ public class SoundSourceBehaviour : MonoBehaviour
     
     private IEnumerator MoveToDestination()
     {
-        direction = GetRandomDirection();
-
         while (true)
         {
             // Wait for a random time between the defined intervals
-            timeToChangeDirection = Random.Range(changeDirectionIntervalMin, changeDirectionIntervalMax);
+            timeToChangeDirection = utilities.GenerateRandomNumber(persistentData.timeChangeDirectionIntervalDistribution[realClass]);
             yield return new WaitForSeconds(timeToChangeDirection);
             
             // Change direction
             direction = GetRandomDirection();
         }
-
-
-        /*
-        for(int i = 1; i < movement.time.Length; i++){
-            timer = 0f;
-            initialPosition = transform.position;
-            float x =  movement.x[i];
-            float y =  movement.y[i];
-            destination = new Vector2(x, y);
-
-            timeToReachDestination = movement.time[i] - movement.time[i-1];
-
-            while (timer < timeToReachDestination)
-            {
-                float t = timer / timeToReachDestination; // Calculate the normalized time
-                transform.position = Vector2.Lerp(initialPosition, destination, t); // Move towards the destination
-                timer += Time.deltaTime; // Increment the timer
-                yield return null; // Wait for the next frame
-            }
-            transform.position = destination;
-
-            yield return null;
-        }        
-        */
     }
+
 
     public void Capture(float timeCaptured){
         StartCoroutine(Mute(timeCaptured));

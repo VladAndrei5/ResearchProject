@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Audio;
 using Random=UnityEngine.Random;
 using System.IO;
+using System.Linq;
 
 public class Utilities : MonoBehaviour
 {
@@ -38,6 +39,7 @@ public class Utilities : MonoBehaviour
     //references to classes
     public UserControls userControls;
     public EntityManager entityManager;
+    public PersistentData persistentData;
     GameObject[] soundSourcesArr;
 
     //array which holds and updates the relative angle of all soundsources to the beam
@@ -45,8 +47,6 @@ public class Utilities : MonoBehaviour
     float[] relativeAngleArray;
     //array which simply holds the angles of all the soundsources
     float[] angleArray;
-
-    int seed = 45;
 
     private static float[] erfInverseTableInput = new float[]
     {
@@ -66,7 +66,7 @@ public class Utilities : MonoBehaviour
 
     void Start(){
         //set the seed for random number generator
-        Random.InitState(seed);
+        Random.InitState(persistentData.seedRandom);
         
         soundSourcesArr = entityManager.getSoundSourcesArray();
         relativeAngleArray = new float[soundSourcesArr.Length];
@@ -283,7 +283,6 @@ public class Utilities : MonoBehaviour
         distribution[2] = minimum;
         distribution[3] = maximum;
         
-        Random.InitState(seed);
         float randomNumber = mean + standardDeviation * Mathf.Sqrt(-2f * Mathf.Log(Random.value)) * Mathf.Sin(2f * Mathf.PI * Random.value);
         
         // Clamp the random number within the specified range
@@ -291,6 +290,32 @@ public class Utilities : MonoBehaviour
 
         return randomNumber;
     }
+
+    /* inspired from https://forum.unity.com/threads/random-numbers-with-a-weighted-chance.442190/
+    */
+    public static string SelectRandomWeighted(string[] items, float[] weights)
+    {
+        if (items == null || weights == null || items.Length != weights.Length)
+        {
+            throw new ArgumentException("");
+        }
+
+        float totalWeight = weights.Sum();
+        float randomValue = Random.Range(0f, totalWeight);
+
+        float currentWeight = 0;
+        for (int i = 0; i < items.Length; i++)
+        {
+            currentWeight += weights[i];
+            if (randomValue < currentWeight)
+            {
+                return items[i];
+            }
+        }
+
+        return items[items.Length - 1];
+    }
+    
 
 
 }
