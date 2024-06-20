@@ -16,6 +16,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
     //float
     public float timer = 0f;
+    public float despawnTimer;
     public float isProducingSoundProgressTimer = 0f;
     public float timeToReach;
     public float AIEstimationConfidence;
@@ -34,15 +35,19 @@ public class BearingTrackerBehaviour : MonoBehaviour
     //other
     private SpriteRenderer spriteRenderer;
     public Sprite newSprite;
-    public Color userColor;
-    public Color AIColor;
+    public Color colorUser;
+    public Color colorAI;
 
 
     //references to classes
     public TabManager tabManager;
     public Utilities utilities;
     public SoundSourceBehaviour soundSourcePair;
-    public AI behaviourAI;
+    public PersistentData persistentData;
+    public EntityManager entityManager;
+
+    public int IDCounter;
+
 
 
     public void ToggleTrackerOutline(bool isEnabled){
@@ -50,18 +55,23 @@ public class BearingTrackerBehaviour : MonoBehaviour
         child.GetComponent<SpriteRenderer>().enabled = isEnabled;
     }
 
-    public void InitaliseBehaviour(string realClass, AI behaviourAI, SoundSourceBehaviour audioSource, string id){
+    public void InitaliseBehaviour(string actualClass, SoundSourceBehaviour audioSource, string id, int IDCount){
 
-        //
+        //create references
         GameObject obj = GameObject.FindWithTag("Utilities");
         utilities = obj.GetComponent<Utilities>();
+        GameObject obj2 = GameObject.FindWithTag("PersistentData");
+        persistentData = obj2.GetComponent<PersistentData>();
+        GameObject obj3 = GameObject.FindWithTag("EntityManager");
+        entityManager = obj3.GetComponent<EntityManager>();
+
+        //set the random seed for utilities as IDCounter
+        IDCounter = IDCount;
+        utilities.ChangeRandomSeed(IDCount);
 
         //these variables never change
-        this.behaviourAI = behaviourAI;
-        this.realClass = realClass;
+        realClass = actualClass;
         this.soundSourcePair = audioSource;
-        this.id = id;
-        //this.isAIactive = isAIactive;
 
         //keeps track if the user overrides the AI estimation
         isTrackerSelected = false;
@@ -72,24 +82,21 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
         //set up sprite renderer and colours of trackers
         spriteRenderer = GetComponent<SpriteRenderer>();
-        userColor = Color.yellow;
-        AIColor = Color.white;
+        colorUser = Color.yellow;
+        colorAI = Color.white;
 
         //create ledger reference
-        GameObject ledgerOBJ = GameObject.FindWithTag("LedgerUI");
-        tabManager = ledgerOBJ.GetComponent<LedgerUI>();
-
-        counter = 0;
+        GameObject tabManagerOBJ = GameObject.FindWithTag("TabManager");
+        tabManager = tabManagerOBJ.GetComponent<TabManager>();
+        
         UpdateAIEstimation();
+        timeToReach = utilities.GenerateRandomNumber(persistentData.AITimeDistribution[realClass]);
+        despawnTimer = utilities.GenerateRandomNumber(persistentData.classesDespawnRate[realClass]);
         //StartCoroutine(UpdateVisibility(soundSourcePair.getGameObject()));
     }
     void Start()
     {
-        if(behaviourAI != null){
-            timer = 0f;
-            counter = 0;
-        }
-
+        timer = 0f;
     }
 
      void Update(){
@@ -114,11 +121,22 @@ public class BearingTrackerBehaviour : MonoBehaviour
                 }
             }
         }
-
+        
         StartCoroutine(CheckAIUpdates());
         StartCoroutine(CheckSoundLevels());
         StartCoroutine(CheckVisibility());
         UpdatePosition(soundSourcePair.getGameObject()); // always update its position
+        CheckDespawn();
+        
+    }
+
+    private void CheckDespawn(){
+        if(despawnTimer <= timer){
+            entityManager.DespawnEntity( soundSourcePair.getGameObject() ,this);
+            tabManager.Unselect();
+            Destroy(soundSourcePair.getGameObject());
+            Destroy(gameObject);
+        }
     }
 
     private IEnumerator CheckVisibility(){
@@ -190,9 +208,8 @@ public class BearingTrackerBehaviour : MonoBehaviour
         transform.localPosition = new Vector3(soundRot * -1f, currentPosition.y, currentPosition.z);
     }
 
-
+    
     private IEnumerator CheckAIUpdates(){
-        timeToReach = behaviourAI.time[counter];
         if(timer <= timeToReach){
             timer += Time.deltaTime; // Increment the timer
             yield return null; // Wait for the next frame
@@ -200,19 +217,17 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
         else{
             UpdateAIEstimation();
-            if(counter < behaviourAI.time.Length - 1){
-                counter++;
-            }
-
             if(isAIactive){
                 DisplayAIEstimation();
             }
+            timeToReach = timeToReach + utilities.GenerateRandomNumber(persistentData.AITimeDistribution[realClass]);
         }
     }
 
     public void UpdateAIEstimation(){
-        AIEstimationClass = behaviourAI.classType[counter];
-        AIEstimationConfidence = behaviourAI.confidence[counter];
+        AIEstimationClass = utilities.SelectRandomWeighted(persistentData.classes, persistentData.AIClassWeights[realClass]);
+        string key = realClass + "-" + AIEstimationClass;
+        AIEstimationConfidence = utilities.GenerateRandomNumber(persistentData.AIConfidenceDistribution[key]);
     }
 
     public void DisplayAIEstimation(){
@@ -229,7 +244,6 @@ public class BearingTrackerBehaviour : MonoBehaviour
             tabManager.UpdateLedgerSelectedClassSymbol();
             tabManager.UpdateAITab();
         }
-        
 
     }
 
@@ -263,10 +277,10 @@ public class BearingTrackerBehaviour : MonoBehaviour
         newSprite = Resources.Load<Sprite>(spritePath);
         spriteRenderer.sprite = newSprite;
         if(isAIactive){
-            spriteRenderer.color = AIColor;
+            spriteRenderer.color = colorAI;
         }
         else{
-            spriteRenderer.color = userColor;
+            spriteRenderer.color = colorUser;
         }
         
     }
@@ -327,10 +341,10 @@ public class BearingTrackerBehaviour : MonoBehaviour
         newSprite = Resources.Load<Sprite>(spritePath);
         spriteRenderer.sprite = newSprite;
         if(isClassChosenByUser){
-            spriteRenderer.color = userColor;
+            spriteRenderer.color = colorUser;
         }
         else{
-            spriteRenderer.color = AIColor;
+            spriteRenderer.color = colorAI;
         }
     }
 
@@ -392,8 +406,8 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
         //set up sprite renderer and colours of trackers
         spriteRenderer = GetComponent<SpriteRenderer>();
-        userColor = Color.yellow;
-        AIColor = Color.white;
+        colorUser = Color.yellow;
+        colorAI = Color.white;
 
         //create ledger reference
         GameObject ledgerOBJ = GameObject.FindWithTag("LedgerUI");

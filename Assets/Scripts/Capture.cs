@@ -8,7 +8,7 @@ public class Capture : MonoBehaviour
     private Sprite originalSprite; // The original sprite
 
     private SpriteRenderer spriteRenderer;
-    public LedgerUI ledgerUI;
+    public TabManager tabManager;
 
     void Start()
     {
@@ -28,7 +28,7 @@ public class Capture : MonoBehaviour
     {
         // Change the sprite to the new one
         spriteRenderer.sprite = newSprite;
-        ledgerUI.Capture();
+        tabManager.Capture();
 
         // Wait for 1 second
         yield return new WaitForSeconds(1f);

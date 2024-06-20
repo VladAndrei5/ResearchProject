@@ -54,7 +54,6 @@ public class PlotManager : MonoBehaviour
     [SerializeField]
     private float[] frequencyNumberArr;
 
-    private GameObject[] soundSourcesArr;
     public GameObject noise;
 
     //Labels for the time axis spectrogram
@@ -86,7 +85,6 @@ public class PlotManager : MonoBehaviour
             plot.Initialise(heights[i], widths[i], resolutionPixelsY[i], resolutionPixelsX[i], numbSecondsDisplayed[i], numberOfBins[i], plotTypes[i]);
         }
 
-        soundSourcesArr = entityManager.getSoundSourcesArray();
         frequencyNumberArr = utilities.createFreqArray(resolutionPixelsX[0]);
         frequenciesDetectableRange = utilities.CreateDetectableRangesArray(frequencyNumberArr);
 
@@ -101,7 +99,7 @@ public class PlotManager : MonoBehaviour
         float lowPassCutoffValue = utilities.maxSonarFrequency;
         float highPassCutoffValue = 10;
         int arrayLen = resolutionPixelsX[0];
-        for(int i = 0; i < soundSourcesArr.Length; i++){
+        for(int i = 0; i < entityManager.audioSourceObjList.Count; i++){
             float rot =  utilities.getRelativeAngleAtSoundSource(i);
             lowPassCutoffValue = 10;
             highPassCutoffValue = utilities.maxSonarFrequency;
@@ -136,7 +134,7 @@ public class PlotManager : MonoBehaviour
                     }
                 }
             }
-            SetCutoffValues(soundSourcesArr[i], lowPassCutoffValue, highPassCutoffValue);
+            SetCutoffValues(entityManager.audioSourceObjList[i], lowPassCutoffValue, highPassCutoffValue);
         }
         noise.GetComponent<AudioSource>().volume = maxNoiseVolume * (userControls.getSonarBeamWidth() / 360f);
         highPassCutoffValue = utilities.getFrequencyBin(arrayLen, utilities.getFrequencyArrayIndexLowBound(arrayLen));

@@ -126,7 +126,7 @@ public class TabManager : MonoBehaviour
         persistentData = persistentDataOBJ.GetComponent<PersistentData>();
 
         //disable the AI Tab based othe scenario file
-        if(persistentData.GetCurrentScenarioData().AIType == "noAI"){
+        if(persistentData.AIType == "none"){
             AITab.SetActive(false);
         }
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Random=UnityEngine.Random;
+
 
 public class PlotGenerator : MonoBehaviour
 {
@@ -17,7 +17,6 @@ public class PlotGenerator : MonoBehaviour
     public UserControls userControls;
 
     //array to hold the sound sources game objects
-    private GameObject[] soundSourcesArr;
     public GameObject noise;
 
     //plot specifications and attributes
@@ -83,10 +82,6 @@ public class PlotGenerator : MonoBehaviour
         //we create an array which will hold the intensity values of each bin corresponding to the number of pixels
         //this does not hold the colour of the pixel
         pixelsLineAmplitude = new float[numberPixelsX];
-
-
-        //we get the list of sound sources
-        soundSourcesArr = entityManager.getSoundSourcesArray();
 
         //we create the array which holds the "label" aka the frequency of each bin corresponding to the line of pixels
         frequencyNumberArr = utilities.createFreqArray(pixelsLineAmplitude.Length);
@@ -154,9 +149,9 @@ public class PlotGenerator : MonoBehaviour
             pixelsLineAmplitude[i] = 0f;
         }
          //Go through each sound source in the scene
-        for (int i = 0; i < soundSourcesArr.Length; i++){
+        for (int i = 0; i < entityManager.audioSourceObjList.Count; i++){
             //and get its spectrum data
-            soundSourcesArr[i].GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
+            entityManager.audioSourceObjList[i].GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
             //find the relative angle of the sound source to the beam
             float soundRotRelative = utilities.getRelativeAngleAtSoundSource(i);
             for (int j = 0; j < pixelsLineAmplitude.Length; j++){
@@ -191,8 +186,8 @@ public class PlotGenerator : MonoBehaviour
         }
 
         //for each sound source in the scene
-        for(int i = 0; i < soundSourcesArr.Length; i++){
-            soundSourcesArr[i].GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
+        for(int i = 0; i < entityManager.audioSourceObjList.Count; i++){
+            entityManager.audioSourceObjList[i].GetComponent<AudioSource>().GetSpectrumData(spectrumAudioSource, 0, FFTWindow.BlackmanHarris);
             float soundRot =  utilities.getAngleAtSoundSource(i);
 
             //how many pixels are drawn per degree

@@ -43,10 +43,6 @@ public class Utilities : MonoBehaviour
     GameObject[] soundSourcesArr;
 
     //array which holds and updates the relative angle of all soundsources to the beam
-    [SerializeField]
-    float[] relativeAngleArray;
-    //array which simply holds the angles of all the soundsources
-    float[] angleArray;
 
     private static float[] erfInverseTableInput = new float[]
     {
@@ -68,31 +64,25 @@ public class Utilities : MonoBehaviour
         //set the seed for random number generator
         Random.InitState(persistentData.seedRandom);
         
-        soundSourcesArr = entityManager.getSoundSourcesArray();
-        relativeAngleArray = new float[soundSourcesArr.Length];
-        angleArray = new float[soundSourcesArr.Length];
-        for (int i = 0; i < soundSourcesArr.Length; i++){
-            relativeAngleArray[i] = 0f;
-            angleArray[i] = 0f;
-        }
     }
 
 
     //update the relative angle off all sound sources to the beam
     //they are all updated here in order to not have each plot make its own calculations
     void Update(){
-        for (int i = 0; i < soundSourcesArr.Length; i++){
-            relativeAngleArray[i] = getSoundSourceAngleRelativeToBeam(soundSourcesArr[i]);
-            angleArray[i] =  getSoundSourceAngle(soundSourcesArr[i]);
+
+        for (int i = 0; i < entityManager.audioSourceObjList.Count; i++){
+            entityManager.relativeAngleList[i] = getSoundSourceAngleRelativeToBeam(entityManager.audioSourceObjList[i]);
+            entityManager.angleList[i] =  getSoundSourceAngle(entityManager.audioSourceObjList[i]);
         }
     }
 
     public float getRelativeAngleAtSoundSource(int i){
-        return relativeAngleArray[i];
+        return entityManager.relativeAngleList[i];
     }
 
     public float getAngleAtSoundSource(int i){
-        return angleArray[i];
+        return entityManager.angleList[i];
     }
 
     /*returns the angle of the object in relation to the sub's vector facing North
@@ -278,10 +268,10 @@ public class Utilities : MonoBehaviour
     //generates a random number from a normal distribution
     public float GenerateRandomNumber(float[] distribution) {
 
-        distribution[0] = mean;
-        distribution[1] = standardDeviation;
-        distribution[2] = minimum;
-        distribution[3] = maximum;
+        float mean = distribution[0];
+        float standardDeviation = distribution[1];
+        float minimum = distribution[2];
+        float maximum = distribution[3];
         
         float randomNumber = mean + standardDeviation * Mathf.Sqrt(-2f * Mathf.Log(Random.value)) * Mathf.Sin(2f * Mathf.PI * Random.value);
         
@@ -291,9 +281,13 @@ public class Utilities : MonoBehaviour
         return randomNumber;
     }
 
+    public void ChangeRandomSeed(int seed){
+        Random.InitState(seed);
+    }
+
     /* inspired from https://forum.unity.com/threads/random-numbers-with-a-weighted-chance.442190/
     */
-    public static string SelectRandomWeighted(string[] items, float[] weights)
+    public string SelectRandomWeighted(string[] items, float[] weights)
     {
         if (items == null || weights == null || items.Length != weights.Length)
         {

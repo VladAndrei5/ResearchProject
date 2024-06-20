@@ -10,31 +10,45 @@ public class SoundSourceBehaviour : MonoBehaviour
     public string audioFile;
     public string id;
     public float timer = 0f;
+    public string realClass;
     public Vector2 destination;
     public Vector2 initialPosition;
     public float timeToReachDestination;
+    public AudioClip audClip;
 
-    public float speed = 5f;
+    public float speed = 1f;
     private Vector2 direction;
     private float timeToChangeDirection;
    
     public PersistentData persistentData;
     public EntityManager entityManager;
+    public Utilities utilities;
 
     
     public void UpdateAudioFilePlaying(AudioClip audioClip){
         //string audioPath = "Sounds/" + audioFileName;
         //AudioClip clip = Resources.Load<AudioClip>(audioPath);
-        Random.InitState(persistentData.seedRandom);
+        
         AudioSource audioSource = this.GetComponent<AudioSource>();
         audioSource.clip = audioClip;
         audioSource.Play();
     }
     
 
-    public void InitaliseBehaviour(AudioClip audioClip, string id){
-        this.id = id;
+    public void InitaliseBehaviour(AudioClip audioClip, string realClass, string id, int IDCounter){
 
+        //create references
+        GameObject obj = GameObject.FindWithTag("Utilities");
+        utilities = obj.GetComponent<Utilities>();
+        GameObject obj2 = GameObject.FindWithTag("PersistentData");
+        persistentData = obj2.GetComponent<PersistentData>();
+        GameObject obj3 = GameObject.FindWithTag("EntityManager");
+        entityManager = obj3.GetComponent<EntityManager>();
+
+        Random.InitState(persistentData.seedRandom);
+        audClip = audioClip;
+        this.id = id;
+        this.realClass = realClass;
         // play the sound
         UpdateAudioFilePlaying(audioClip);
     }

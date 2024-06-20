@@ -14,6 +14,7 @@ TagManager:
   - UI
   - LedgerUI
   - Utilities
+  - TabManager
   layers:
   - Default
   - TransparentFX

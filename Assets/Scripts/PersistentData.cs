@@ -23,47 +23,71 @@ public class PersistentData : MonoBehaviour
     public float seaLifeSpawnRate;
     public float pirateSpawnRate;
 
+    public string AIType = "AI";
+
+    //unknown should always be last, and present even if unused
     public string[] classes = new string[] {"ship" , "seaLife" , "pirate" , "unknown"};
     //public float[] classesSpawnWeights = new float[] {1f, 1f, 1f, 1f};
 
 
     
-    Dictionary<string, float[]> timeChangeDirectionIntervalDistribution = new Dictionary<string, float[]>()
+    public Dictionary<string, float[]> timeChangeDirectionIntervalDistribution = new Dictionary<string, float[]>()
     {
-        {"ship", new float[] {10f,1f,0f,20f} },
-        {"seaLife", new float[] {10f,1f,0f,20f} },
-        {"pirate", new float[] {10f,1f,0f,20f} }
+        {"ship", new float[] {25,4f,5f,30f} },
+        {"seaLife", new float[] {25,4f,5f,30f} },
+        {"pirate", new float[] {25,4f,5f,30f} }
 
     };
-
 
     //spawn rate in seconds
-    Dictionary<string, float[]> classesSpawnRate = new Dictionary<string, float[]>()
+    public Dictionary<string, float[]> classesSpawnRate = new Dictionary<string, float[]>()
     {
-        {"ship", new float[] {10f,1f,0f,20f} },
-        {"seaLife", new float[] {10f,1f,0f,20f} },
-        {"pirate", new float[] {10f,1f,0f,20f} }
+        {"ship", new float[] {15,3f,1f,25f} },
+        {"seaLife", new float[] {10f,3f,1f,25f} },
+        {"pirate", new float[] {30f,1f,1f,40f} }
+    };
+
+    public Dictionary<string, float[]> classesDespawnRate = new Dictionary<string, float[]>()
+    {
+        {"ship", new float[] {20f,3f,15f,30f} },
+        {"seaLife", new float[] {20f,3f,15f,30f} },
+        {"pirate", new float[] {20f,3f,15f,30f} }
+    };
+
+    public Dictionary<string, float[]> AITimeDistribution = new Dictionary<string, float[]>()
+    {
+        {"ship", new float[] {5f,1f,0f,20f} },
+        {"seaLife", new float[] {5f,1f,0f,20f} },
+        {"pirate", new float[] {5f,1f,0f,20f} }
     };
     
-    
 
+    public Dictionary<string, float[]> AIConfidenceDistribution = new Dictionary<string, float[]>()
+    {
+        {"ship-ship", new float[] {80f,1f,0f,100f} },
+        {"ship-pirate", new float[] {80f,1f,0f,100f} },
+        {"ship-seaLife", new float[] {50f,1f,0f,100f} },
+        {"ship-unknown", new float[] {50f,1f,0f,100f} },
 
-    /*
-    public string[] audioFileShip = new string[] {"extended_passengership_1_sim" , "extended_passengership_2_sim"};
-    public float[] audioFileShipWeight = new float[] {1f, 1f};
-    public string[] audioFilePirate = new string[] {"sonar_ping_extended_sim"};
-    public float[] audioFilePirateWeight = new float[] {1f};
-    public string[] audioFileSeaLife = new string[] {"North_Atlantic_Right_Whale_scream_extended_sim"};
-    public float[] audioFileSeaLifeWeight = new float[] {1f};
-    */
+        {"pirate-ship", new float[] {50f,1f,0f,100f} },
+        {"pirate-pirate", new float[] {50f,1f,0f,100f} },
+        {"pirate-seaLife", new float[] {50f,1f,0f,100f} },
+        {"pirate-unknown", new float[] {50f,1f,0f,100f} },
 
-    //normal distribution for initial number of entities
-    //public float[] initialNumberOfEntitiesDistribution =  new float[] { 5f, 1f, 1f, 10f };
+        {"seaLife-ship", new float[] {50f,1f,0f,100f} },
+        {"seaLife-pirate", new float[] {50f,1f,0f,100f} },
+        {"seaLife-seaLife", new float[] {50f,1f,0f,100f} },
+        {"seaLife-unknown", new float[] {50f,1f,0f,100f} }
+    };
 
-    //the time distriubiton until a new entity of class ship is spawned
-    //public float[] shipSpawnProbabilityDistributuion = new float[] { 5f, 1f, 1f, 10f };
-
-
+    //the real class represent the key, the float[] represents the weight for each class at that position.
+    //e.g. the weight at index 0 represent the classes[0] class's weight.
+    public Dictionary<string, float[]> AIClassWeights = new Dictionary<string, float[]>()
+    {
+        {"ship", new float[] {1f,1f,1f,1f} },
+        {"seaLife", new float[] {1f,1f,1f,1f} },
+        {"pirate", new float[] {1f,1f,1f,1f} }
+    };
 
     //public TextAsset SaveScoreFile;
 

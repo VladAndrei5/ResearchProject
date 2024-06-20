@@ -1935,6 +1935,16 @@ MonoBehaviour:
     scenarios: []
   currentScenarioNumb: 0
   currentScore: 0
+  seedRandom: 20
+  shipSpawnRate: 0
+  seaLifeSpawnRate: 0
+  pirateSpawnRate: 0
+  AIType: AI
+  classes:
+  - ship
+  - seaLife
+  - pirate
+  - unknown
 --- !u!4 &233611082
 Transform:
   m_ObjectHideFlags: 0
@@ -5672,11 +5682,16 @@ MonoBehaviour:
   ParentMapTrackers: {fileID: 866307035}
   ParentBearingTrackers: {fileID: 1636208323}
   ParentAudioSources: {fileID: 1894374585}
-  persistentData: {fileID: 0}
-  utilities: {fileID: 0}
-  audioSourcesObjArray: []
-  foundObjects: []
+  persistentData: {fileID: 233611081}
+  utilities: {fileID: 1052755790}
+  spawnEntitiesInterval: []
   bearingTrackersArray: []
+  audioSourceObjList: []
+  bearingTrackerList: []
+  relativeAngleList: []
+  angleList: []
+  IDCounter: 0
+  timer: 0
 --- !u!4 &626933009
 Transform:
   m_ObjectHideFlags: 0
@@ -8131,7 +8146,7 @@ MonoBehaviour:
   maxSonarFrequency: 10000
   userControls: {fileID: 231848793}
   entityManager: {fileID: 626933008}
-  relativeAngleArray: []
+  persistentData: {fileID: 233611081}
 --- !u!1 &1104315657
 GameObject:
   m_ObjectHideFlags: 0
@@ -11001,7 +11016,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   newSprite: {fileID: 21300000, guid: 8fcc53cc9526b9e4bbdf0ffffce22be4, type: 3}
-  ledgerUI: {fileID: 2115084417}
+  tabManager: {fileID: 0}
 --- !u!61 &1445184082
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -14614,8 +14629,8 @@ GameObject:
   - component: {fileID: 2115084418}
   - component: {fileID: 2115084417}
   m_Layer: 0
-  m_Name: LedgerUI
-  m_TagString: LedgerUI
+  m_Name: TabManager
+  m_TagString: TabManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14650,7 +14665,7 @@ MonoBehaviour:
   unknownToggle: {fileID: 1549718087}
   AIEstimationToggle: {fileID: 1372958850}
   selectedTracker: {fileID: 0}
-  persistentData: {fileID: 0}
+  persistentData: {fileID: 233611081}
   AITab: {fileID: 318791505}
   ChooseClassificationTab: {fileID: 151602076}
 --- !u!4 &2115084418
