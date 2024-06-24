@@ -30,7 +30,7 @@ public class PersistentData : MonoBehaviour
     //public float[] classesSpawnWeights = new float[] {1f, 1f, 1f, 1f};
 
 
-    
+    //
     public Dictionary<string, float[]> timeChangeDirectionIntervalDistribution = new Dictionary<string, float[]>()
     {
         {"ship", new float[] {25,4f,5f,30f} },
@@ -84,7 +84,7 @@ public class PersistentData : MonoBehaviour
     //e.g. the weight at index 0 represent the classes[0] class's weight.
     public Dictionary<string, float[]> AIClassWeights = new Dictionary<string, float[]>()
     {
-        {"ship", new float[] {1f,1f,1f,1f} },
+        {"ship", new float[] {5f,1f,1f,1f} },
         {"seaLife", new float[] {1f,1f,1f,1f} },
         {"pirate", new float[] {1f,1f,1f,1f} }
     };
