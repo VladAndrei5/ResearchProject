@@ -282,7 +282,7 @@ public class Utilities : MonoBehaviour
     }
 
     public void ChangeRandomSeed(int seed){
-        Random.InitState(seed);
+        //Random.InitState(seed);
     }
 
     /* inspired from https://forum.unity.com/threads/random-numbers-with-a-weighted-chance.442190/

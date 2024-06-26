@@ -47,7 +47,6 @@ public class EntityManager : MonoBehaviour
     public float timer;
 
     void Awake(){
-        Random.InitState(persistentData.seedRandom);
         IDCounter = 0;
         CreateInitialEntities();
         StartCoroutine(SpawnEntities());
