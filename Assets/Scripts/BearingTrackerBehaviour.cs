@@ -18,26 +18,32 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public float timer = 0f;
     public float despawnTimer;
     public float isProducingSoundProgressTimer = 0f;
+    public float timerAIConfidence1;
+    public float timerAIConfidence2;
     public float timerAIChangeEstimation;
     public float AIEstimationConfidence;
+    public float previousAIEstimationConfidence;
+    public float futureAIEstimationConfidence;
     public float totalVolume;
     public int counter;
 
+    public float upperConfidenceLimit = 50f;
+    public float lowerConfidenceLimit = 40f;
+
     //flags
     public bool isTrackerSelected;
-    public bool isTrackerCaptured;
     public bool isAIactive;
-    public bool isSoundSourceActive;
     public bool isTrackerAvailable;
     public bool isProducingSound;
     public bool isProducingSoundProgress;
+    
 
     //other
     private SpriteRenderer spriteRenderer;
     public Sprite newSprite;
     public Color colorUser;
     public Color colorAI;
-
+    public Color colorGrayedOut;
 
     //references to classes
     public TabManager tabManager;
@@ -49,6 +55,20 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public int IDCounter;
 
 
+    public void CheckStressLevels(){
+        float stress = 70f;
+        if((stress>50) && (AIEstimationConfidence < lowerConfidenceLimit)){
+            Color color = spriteRenderer.color;
+            color.a = 0.3f;
+            spriteRenderer.color = color;
+        }
+        else{
+            Color color = spriteRenderer.color;
+            color.a = 1f;
+            spriteRenderer.color = color;
+        }
+
+    }
 
     public void ToggleTrackerOutline(bool isEnabled){
         GameObject child = transform.GetChild(0).gameObject;
@@ -78,17 +98,25 @@ public class BearingTrackerBehaviour : MonoBehaviour
         isProducingSound = false;
         isProducingSoundProgress = false;
 
+
         //set up sprite renderer and colours of trackers
         spriteRenderer = GetComponent<SpriteRenderer>();
         colorUser = Color.yellow;
         colorAI = Color.white;
+        colorGrayedOut = Color.grey;
+
+        timerAIConfidence1 = 0f;
+        timerAIConfidence2 = 0f;
 
         //create ledger reference
         GameObject tabManagerOBJ = GameObject.FindWithTag("TabManager");
         tabManager = tabManagerOBJ.GetComponent<TabManager>();
         
-        UpdateAIEstimation();
-        timerAIChangeEstimation = utilities.GenerateRandomNumber(persistentData.AITimeDistribution[realClass]);
+        //UpdateAIEstimation();
+        //DisplayAIEstimation();
+
+        timerAIChangeEstimation = 0f;
+        timer = 0f;
         despawnTimer = utilities.GenerateRandomNumber(persistentData.classesDespawnRate[realClass]);
         //StartCoroutine(UpdateVisibility(soundSourcePair.getGameObject()));
     }
@@ -120,9 +148,17 @@ public class BearingTrackerBehaviour : MonoBehaviour
             }
         }
         
-        StartCoroutine(CheckAIUpdates());
+        //StartCoroutine(CheckAIUpdates());
         StartCoroutine(CheckSoundLevels());
         StartCoroutine(CheckVisibility());
+        StartCoroutine(CheckAIUpdates());
+        if(isAIactive){
+            DisplayAIEstimation();
+        }
+        else{
+            //DisplayUserClass();
+        }
+        CheckStressLevels();
         UpdatePosition(soundSourcePair.getGameObject()); // always update its position
         CheckDespawn();
         
@@ -192,6 +228,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
     private void TurnOffTracker()
     {
         //Debug.Log("turn off");
+        tabManager.Unselect();
         GetComponent<SpriteRenderer>().enabled = false;
 
     }
@@ -220,23 +257,34 @@ public class BearingTrackerBehaviour : MonoBehaviour
             yield return null; // Wait for the next frame
         }
         else{
-            UpdateAIEstimation();
-            if(isAIactive){
-                DisplayAIEstimation();
-            }
             timerAIChangeEstimation = timerAIChangeEstimation + utilities.GenerateRandomNumber(persistentData.AITimeDistribution[realClass]);
+            UpdateAIEstimation();
+            
         }
+
+        //linearly interpolate between present confidence level and futre confidence level
+        AIEstimationConfidence = utilities.Interpolate(previousAIEstimationConfidence, futureAIEstimationConfidence, timerAIConfidence1, timer, timerAIConfidence2);
+
     }
 
     public void UpdateAIEstimation(){
+        //TODO implement previous and future estimation Class
         AIEstimationClass = utilities.SelectRandomWeighted(persistentData.classes, persistentData.AIClassWeights[realClass]);
+
         string key = realClass + "-" + AIEstimationClass;
-        AIEstimationConfidence = utilities.GenerateRandomNumber(persistentData.AIConfidenceDistribution[key]);
-        
+
+        timerAIConfidence1 = timerAIConfidence2;
+        timerAIConfidence2 = timer + timerAIChangeEstimation;
+        if(futureAIEstimationConfidence == null){
+            futureAIEstimationConfidence = utilities.GenerateRandomNumber(persistentData.AIConfidenceDistribution[key]);
+        }
+        previousAIEstimationConfidence = futureAIEstimationConfidence;
+        futureAIEstimationConfidence = utilities.GenerateRandomNumber(persistentData.AIConfidenceDistribution[key]);
+
     }
 
     public void DisplayAIEstimation(){
-        Debug.Log("DisplayAI");
+        //Debug.Log("DisplayAI");
         isAIactive = true;
         displayedClass = AIEstimationClass;
         UpdateDisplaySymbol();
@@ -270,7 +318,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
     //update the shown bearing symbol
     public void UpdateDisplaySymbol(){
 
-        if(!isSoundSourceActive){
+        if(!isProducingSound){
             return;
         }
 

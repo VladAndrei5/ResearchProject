@@ -306,6 +306,17 @@ public class Utilities : MonoBehaviour
         return items[items.Length - 1];
     }
     
+    
+    public float Interpolate(float value1, float value2, float xMin, float x, float xMax)
+    {
+        // Ensure x is within the range [xMin, xMax]
+        x = Mathf.Clamp(x, xMin, xMax);
 
+        // Calculate the interpolation factor
+        float t = (x - xMin) / (xMax - xMin);
+
+        // Perform the interpolation
+        return Mathf.Lerp(value1, value2, t);
+    }
 
 }

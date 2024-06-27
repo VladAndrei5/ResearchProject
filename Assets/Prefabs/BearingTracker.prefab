@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7833827482520485538}
   - component: {fileID: 5156785751037458657}
   - component: {fileID: 1819505615984120046}
+  - component: {fileID: 5783204792725136974}
   m_Layer: 0
   m_Name: BearingTracker
   m_TagString: BTracker
@@ -123,25 +124,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   realClass: 
-  behaviourAI:
-    time: []
-    classType: []
-    confidence: []
-  timer: 0
-  timeToReach: 0
-  soundSourcePair: {fileID: 0}
-  AIEstimationConfidence: 0
   AIEstimationClass: 
-  userChosenClass: 
-  isClassChosenByUser: 0
-  isTrackerSelected: 0
+  userClass: 
   displayedClass: 
-  displayedConfidence: 0
-  newSprite: {fileID: 0}
+  id: 
+  timer: 0
+  despawnTimer: 0
+  isProducingSoundProgressTimer: 0
+  timerAIConfidence1: 0
+  timerAIConfidence2: 0
+  timerAIChangeEstimation: 0
+  AIEstimationConfidence: 0
+  previousAIEstimationConfidence: 0
+  futureAIEstimationConfidence: 0
+  totalVolume: 0
   counter: 0
-  userColor: {r: 0, g: 0, b: 0, a: 0}
-  AIColor: {r: 0, g: 0, b: 0, a: 0}
-  ledgerUI: {fileID: 0}
+  upperConfidenceLimit: 50
+  lowerConfidenceLimit: 40
+  isTrackerSelected: 0
+  isAIactive: 0
+  isTrackerAvailable: 0
+  isProducingSound: 0
+  isProducingSoundProgress: 0
+  newSprite: {fileID: 0}
+  colorUser: {r: 0, g: 0, b: 0, a: 0}
+  colorAI: {r: 0, g: 0, b: 0, a: 0}
+  colorGrayedOut: {r: 0, g: 0, b: 0, a: 0}
+  tabManager: {fileID: 0}
+  utilities: {fileID: 0}
+  soundSourcePair: {fileID: 0}
+  persistentData: {fileID: 0}
+  entityManager: {fileID: 0}
+  IDCounter: 0
 --- !u!114 &1819505615984120046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -156,6 +170,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentRenderer: {fileID: 7162669080306821493}
   childRenderer: {fileID: 758641112243654039}
+--- !u!114 &5783204792725136974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2714028954598441527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc73a882c44054d2c94611f325623095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3830315692579855004
 GameObject:
   m_ObjectHideFlags: 0

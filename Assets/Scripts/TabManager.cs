@@ -49,7 +49,7 @@ public class TabManager : MonoBehaviour
         if(!isOn){
             return;
         }
-        if(!selectedTracker.isSoundSourceActive){
+        if(!selectedTracker.isProducingSound){
             return;
         }
         Debug.Log("Ship2");
@@ -62,7 +62,7 @@ public class TabManager : MonoBehaviour
         if(!isOn){
             return;
         }
-        if(!selectedTracker.isSoundSourceActive){
+        if(!selectedTracker.isProducingSound){
             return;
         }
         selectedClass = "pirate";
@@ -74,7 +74,7 @@ public class TabManager : MonoBehaviour
         if(!isOn){
             return;
         }
-        if(!selectedTracker.isSoundSourceActive){
+        if(!selectedTracker.isProducingSound){
             return;
         }
         selectedClass = "seaLife";
@@ -86,7 +86,7 @@ public class TabManager : MonoBehaviour
         if(!isOn){
             return;
         }
-        if(!selectedTracker.isSoundSourceActive){
+        if(!selectedTracker.isProducingSound){
             return;
         }
         selectedClass = "unknown";
@@ -98,7 +98,7 @@ public class TabManager : MonoBehaviour
         if(!isOn){
             return;
         }
-        if(!selectedTracker.isSoundSourceActive){
+        if(!selectedTracker.isProducingSound){
             return;
         }
         isAIestimationOn = true;
@@ -271,6 +271,9 @@ public class TabManager : MonoBehaviour
     }
 
     void Update(){
+        if(selectedTracker == null){
+            Unselect();
+        }
         //if the AI estimation is the one displayed then update the displayed text in the ledger in case it changed
         /*
         if(selectedTracker != null){

@@ -96,6 +96,7 @@ public class SoundSourceBehaviour : MonoBehaviour
         // Generate a random direction
         float angle = Random.Range(0f, 360f);
         return new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
+        speed = utilities.GenerateRandomNumber(persistentData.speedDistribution[realClass]);
     }
     
     
