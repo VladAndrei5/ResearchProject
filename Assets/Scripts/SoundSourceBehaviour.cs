@@ -19,10 +19,14 @@ public class SoundSourceBehaviour : MonoBehaviour
     public float speed = 1f;
     private Vector2 direction;
     private float timeToChangeDirection;
+
+    public bool readyToDespawn;
    
     public PersistentData persistentData;
     public EntityManager entityManager;
     public Utilities utilities;
+
+    public BearingTrackerBehaviour bearingTracker;
 
     
     public void UpdateAudioFilePlaying(AudioClip audioClip){
@@ -45,12 +49,16 @@ public class SoundSourceBehaviour : MonoBehaviour
         GameObject obj3 = GameObject.FindWithTag("EntityManager");
         entityManager = obj3.GetComponent<EntityManager>();
 
-        Random.InitState(persistentData.seedRandom);
+        readyToDespawn = false;
         audClip = audioClip;
         this.id = id;
         this.realClass = realClass;
         // play the sound
         UpdateAudioFilePlaying(audioClip);
+    }
+
+    public void SetTrackerPair(BearingTrackerBehaviour trackerPair){
+        bearingTracker = trackerPair;
     }
 
     // Update is called once per frame
@@ -71,8 +79,15 @@ public class SoundSourceBehaviour : MonoBehaviour
     {
         // Move the object towards the direction vector
         transform.Translate(direction * speed * Time.deltaTime);
-        //if no sound is playing then play some
-        if(!GetComponent<AudioSource>().isPlaying){
+  
+        if(GetComponent<AudioSource>().isPlaying){
+            return;
+        }
+
+        if(readyToDespawn){
+            bearingTracker.Despawn();
+        }
+        else{
             UpdateAudioFilePlaying(entityManager.ChooseAudioClip(realClass));
         }
     }
@@ -96,19 +111,6 @@ public class SoundSourceBehaviour : MonoBehaviour
             // Change direction
             direction = GetRandomDirection();
         }
-    }
-
-
-    public void Capture(float timeCaptured){
-        StartCoroutine(Mute(timeCaptured));
-    }
-
-    private IEnumerator Mute(float timeCaptured)
-    {
-        GetComponent<AudioSource>().volume = 0f;
-        yield return new WaitForSeconds(timeCaptured);
-        GetComponent<AudioSource>().volume = 1f;
-
     }
 
 

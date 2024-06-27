@@ -111,6 +111,7 @@ public class EntityManager : MonoBehaviour
         //spawns all the prefabs;
         GameObject audioSource = SpawnPrefabsAudioSource(audioClip, classType, id);
         BearingTrackerBehaviour bearingTracker = SpawnPrefabsBearingTracker(audioSource, classType);
+        audioSource.GetComponent<SoundSourceBehaviour>().SetTrackerPair(bearingTracker);
 
 
         //add them to their respective lists
@@ -122,6 +123,9 @@ public class EntityManager : MonoBehaviour
 
     public void DespawnEntity(GameObject audioSource, BearingTrackerBehaviour tracker){
 
+
+        relativeAngleList.RemoveAt(audioSourceObjList.IndexOf(audioSource));
+        angleList.RemoveAt(audioSourceObjList.IndexOf(audioSource));
         audioSourceObjList.Remove(audioSource);
         bearingTrackerList.Remove(tracker);
         
