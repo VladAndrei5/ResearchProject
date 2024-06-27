@@ -1930,12 +1930,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45f3ad5fdd6c05449a46c8fabb49389a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jsonScenariosFile: {fileID: 4900000, guid: f9aa4fbdc890da74db07a22bf94a18a6, type: 3}
-  scenarioData:
-    scenarios: []
-  currentScenarioNumb: 0
   currentScore: 0
-  seedRandom: 15
+  seedRandom: 27
   shipSpawnRate: 0
   seaLifeSpawnRate: 0
   pirateSpawnRate: 0
@@ -1945,6 +1941,8 @@ MonoBehaviour:
   - seaLife
   - pirate
   - unknown
+  countdown: 900
+  noiseScalingFactor: 0.05
 --- !u!4 &233611082
 Transform:
   m_ObjectHideFlags: 0
@@ -4281,7 +4279,6 @@ MonoBehaviour:
   spotlight1: {fileID: 693844742}
   spotlight2: {fileID: 241015793}
   persistentData: {fileID: 233611081}
-  levelManager: {fileID: 1332201611}
   nextLevelPanel: {fileID: 1569713599}
   endScreenPanel: {fileID: 8364550}
 --- !u!4 &493780531
@@ -9865,15 +9862,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ab6d80b7b983a943b0c4b41b510439f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  persistentData: {fileID: 233611081}
-  currentScenarioData:
-    id: 
-    countdown: 0
-    AIType: 
-    noiseScalingFactor: 0
-    numberEntities: 0
-    entities: []
-  entityManager: {fileID: 0}
 --- !u!4 &1332201612
 Transform:
   m_ObjectHideFlags: 0
@@ -11016,7 +11004,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   newSprite: {fileID: 21300000, guid: 8fcc53cc9526b9e4bbdf0ffffce22be4, type: 3}
-  tabManager: {fileID: 0}
+  tabManager: {fileID: 2115084417}
 --- !u!61 &1445184082
 BoxCollider2D:
   m_ObjectHideFlags: 0

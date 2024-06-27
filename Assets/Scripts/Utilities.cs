@@ -281,10 +281,6 @@ public class Utilities : MonoBehaviour
         return randomNumber;
     }
 
-    public void ChangeRandomSeed(int seed){
-        //Random.InitState(seed);
-    }
-
     /* inspired from https://forum.unity.com/threads/random-numbers-with-a-weighted-chance.442190/
     */
     public string SelectRandomWeighted(string[] items, float[] weights)

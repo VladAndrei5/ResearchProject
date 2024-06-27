@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class StartMenuUI : MonoBehaviour
 {
+    /*
     public LevelManager levelManager;
     public PersistentData persistentData;
 
@@ -24,4 +25,5 @@ public class StartMenuUI : MonoBehaviour
     private void exitClick(){
         Application.Quit();
     }
+    */
 }

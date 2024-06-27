@@ -50,14 +50,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioFile: 
   id: 
-  movement:
-    time: []
-    x: []
-    y: []
   timer: 0
+  realClass: 
   destination: {x: 0, y: 0}
   initialPosition: {x: 0, y: 0}
   timeToReachDestination: 0
+  audClip: {fileID: 0}
+  speed: 1
+  readyToDespawn: 0
+  persistentData: {fileID: 0}
+  entityManager: {fileID: 0}
+  utilities: {fileID: 0}
+  bearingTracker: {fileID: 0}
 --- !u!82 &3993541827669681662
 AudioSource:
   m_ObjectHideFlags: 0
@@ -72,7 +76,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 0.5
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

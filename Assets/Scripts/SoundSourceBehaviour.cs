@@ -39,7 +39,7 @@ public class SoundSourceBehaviour : MonoBehaviour
     }
     
 
-    public void InitaliseBehaviour(AudioClip audioClip, string realClass, string id, int IDCounter){
+    public void InitaliseBehaviour(AudioClip audioClip, string realClass){
 
         //create references
         GameObject obj = GameObject.FindWithTag("Utilities");
@@ -51,7 +51,6 @@ public class SoundSourceBehaviour : MonoBehaviour
 
         readyToDespawn = false;
         audClip = audioClip;
-        this.id = id;
         this.realClass = realClass;
         // play the sound
         UpdateAudioFilePlaying(audioClip);

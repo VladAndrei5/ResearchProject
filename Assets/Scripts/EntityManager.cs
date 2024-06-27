@@ -11,8 +11,6 @@ using System.IO;
 
 public class EntityManager : MonoBehaviour
 {   
-
-    //Prefab game objects which will be instantiated from scenario file, trackers and audio sources
     public GameObject PrefabMapTracker;
     public GameObject PrefabBearingTracker;
     public GameObject PrefabAudioSource;
@@ -53,7 +51,7 @@ public class EntityManager : MonoBehaviour
     }
 
     //spawns all the audio sources
-    private GameObject SpawnPrefabsAudioSource(AudioClip audioClip, string realClass, string id){
+    private GameObject SpawnPrefabsAudioSource(AudioClip audioClip, string realClass){
         IDCounter++;
 
         Vector3 localPosition = Vector3.zero; // Local position of the spawned prefabs relative to the parentObject
@@ -64,7 +62,7 @@ public class EntityManager : MonoBehaviour
         GameObject audioSource = Instantiate(PrefabAudioSource, ParentAudioSources.transform);
         audioSource.transform.localPosition = localPosition;
         //Initalise its behaviour
-        audioSource.GetComponent<SoundSourceBehaviour>().InitaliseBehaviour(audioClip, realClass, id, IDCounter);
+        audioSource.GetComponent<SoundSourceBehaviour>().InitaliseBehaviour(audioClip, realClass);
         return audioSource;
     }
 
@@ -85,7 +83,7 @@ public class EntityManager : MonoBehaviour
         bearingTracker.transform.localRotation = Quaternion.Euler(localRotation);
         bearingTracker.transform.localScale = localScale;
         //Initalise its behaviour
-        bearingTracker.GetComponent<BearingTrackerBehaviour>().InitaliseBehaviour(realClass, audioSource.GetComponent<SoundSourceBehaviour>(), id, IDCounter);
+        bearingTracker.GetComponent<BearingTrackerBehaviour>().InitaliseBehaviour(realClass, audioSource.GetComponent<SoundSourceBehaviour>(), IDCounter);
         return bearingTracker.GetComponent<BearingTrackerBehaviour>();
     }
 
@@ -107,9 +105,8 @@ public class EntityManager : MonoBehaviour
     private void SpawnEntity(string classType){
         AudioClip audioClip = ChooseAudioClip(classType);
         realClass = classType;
-        id = "11";
         //spawns all the prefabs;
-        GameObject audioSource = SpawnPrefabsAudioSource(audioClip, classType, id);
+        GameObject audioSource = SpawnPrefabsAudioSource(audioClip, classType);
         BearingTrackerBehaviour bearingTracker = SpawnPrefabsBearingTracker(audioSource, classType);
         audioSource.GetComponent<SoundSourceBehaviour>().SetTrackerPair(bearingTracker);
 
@@ -178,43 +175,6 @@ public class EntityManager : MonoBehaviour
     void Update(){
         timer += Time.deltaTime;
     }
-
-
-    /*
-    public void PopulateEntities(Scenario scenario){
-        //get the number of entities in first scenario
-        int numberOfEntities = scenario.numberEntities;
-
-        //for each entity it spawns its audio source and trackers
-        for(int i = 0; i < numberOfEntities; i++){
-            //take audio file name from scenarioData
-            audioClip = scenario.entities[i].audio;
-            //same for classType
-            realClass = scenario.entities[i].realClass;
-            id = scenario.entities[i].id;
-            movement = scenario.entities[i].movement;
-            behaviourAI = scenario.entities[i].AI;
-            //spawns all the prefabs;
-            GameObject audioSource = SpawnPrefabsAudioSource(audioClip, id, movement);
-            //SpawnPrefabsMapTrackers();
-            SpawnPrefabsBearingTracker(audioSource);
-        }
-        //after creating the objects, add them to their respective lists
-        foundObjects = GameObject.FindGameObjectsWithTag("AudioSourceObj");
-        audioSourcesObjArray = new GameObject[foundObjects.Length];
-        audioSourcesObjArray = foundObjects;
-        
-        Utilities.Instance.CopyArray(audioSourcesObjArray, foundObjects);
-
-        foundObjects = GameObject.FindGameObjectsWithTag("BTrackers");
-        bearingTrackersArray = new BearingTrackerBehaviour[foundObjects.Length];
-        //create the bearing trackers list
-        for (int i = 0; i < foundObjects.Length; i++){
-            bearingTrackersArray[i] = foundObjects[i].GetComponent<BearingTrackerBehaviour>();
-        }
-        
-    }
-    */
 
     public GameObject getSoundSourceObj(int i){
         return audioSourceObjList[i];

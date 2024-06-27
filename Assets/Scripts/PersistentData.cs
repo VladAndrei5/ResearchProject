@@ -6,10 +6,6 @@ using System.IO;
 
 public class PersistentData : MonoBehaviour
 {
-
-    public TextAsset jsonScenariosFile;
-    public ScenarioData scenarioData;
-    public int currentScenarioNumb;
     public int currentScore;
 
 
@@ -89,16 +85,14 @@ public class PersistentData : MonoBehaviour
         {"pirate", new float[] {1f,1f,1f,1f} }
     };
 
+    public int countdown = 900;
+    public float noiseScalingFactor = 0.05f;
+
     //public TextAsset SaveScoreFile;
 
     void Awake()
     {
-        //prevents it from being deleted on scene change
-        DontDestroyOnLoad(this.gameObject);
-        //loading the scenario data
-        scenarioData = JsonConvert.DeserializeObject<ScenarioData>(jsonScenariosFile.text);
-        //set up the current scenario number
-        currentScenarioNumb = 1;
+        Random.InitState(seedRandom);
         ResetScore();
     }
 
@@ -131,17 +125,8 @@ public class PersistentData : MonoBehaviour
         currentScore = 0;
     }
 
-    //returns the current scenario being played
-    public Scenario GetCurrentScenarioData(){
-        return scenarioData.scenarios[currentScenarioNumb-1];
-    }
-
-    public int GetNumberOfScenarios(){
-        return scenarioData.scenarios.Length;
-    }
-
     public float GetNoiseScalingFactor(){
-        return scenarioData.scenarios[currentScenarioNumb-1].noiseScalingFactor;
+        return noiseScalingFactor;
     }
 
     public void SaveGame(){

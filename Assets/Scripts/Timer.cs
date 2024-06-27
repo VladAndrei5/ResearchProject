@@ -13,7 +13,6 @@ public class Timer : MonoBehaviour
     public Light spotlight1;
     public Light spotlight2;
     public PersistentData persistentData;
-    public LevelManager levelManager;
     public GameObject nextLevelPanel;
 
     public GameObject endScreenPanel;
@@ -30,6 +29,7 @@ public class Timer : MonoBehaviour
     /*if the button "next scenario" is pressed then restart the time
     increment the current scenario number and move to next level
     */
+    /*
     void HandleNextLevelButtonClick()
     { 
         Time.timeScale = 0f;
@@ -38,8 +38,10 @@ public class Timer : MonoBehaviour
         SetPanelInteractibility(endScreenPanel, false);
         SetPanelInteractibility(nextLevelPanel, false);
     }
+    */
 
     //make the "next scenario" screen appear
+    /*
     public void NextScenarioScreen(){
         Time.timeScale = 0f;
         SetPanelInteractibility(nextLevelPanel, true);
@@ -49,24 +51,22 @@ public class Timer : MonoBehaviour
         Time.timeScale = 0f;
         SetPanelInteractibility(endScreenPanel, true);
     }
+    */
 
     // Start is called before the first frame update
     void Awake()
     {
-        SetPanelInteractibility(endScreenPanel, false);
-        SetPanelInteractibility(nextLevelPanel, false);
+        //SetPanelInteractibility(endScreenPanel, false);
+        //SetPanelInteractibility(nextLevelPanel, false);
         Time.timeScale = 1f;
-        nextScenarioButton.onClick.AddListener(HandleNextLevelButtonClick);
+        //nextScenarioButton.onClick.AddListener(HandleNextLevelButtonClick);
 
-        endScreenButton.onClick.AddListener(HandleEndScreenButtonClick);
+        //endScreenButton.onClick.AddListener(HandleEndScreenButtonClick);
 
         GameObject persistentDataOBJ = GameObject.FindWithTag("PersistentData");
         persistentData = persistentDataOBJ.GetComponent<PersistentData>();
 
-        GameObject levelManagerOBJ = GameObject.FindWithTag("LevelManager");
-        levelManager = levelManagerOBJ.GetComponent<LevelManager>();
-
-        totalTime = persistentData.GetCurrentScenarioData().countdown;
+        totalTime = persistentData.countdown;
         currentTime = totalTime;
     }
 
@@ -102,13 +102,8 @@ public class Timer : MonoBehaviour
         {
              //if timer reached 0 move on to next scenario
             timerText.text = "00:00:000";
-            if(persistentData.currentScenarioNumb < persistentData.GetNumberOfScenarios()){
-                persistentData.ResetScore();
-                NextScenarioScreen();
-            }
-            else{
-                EndScreen();
-            }           
+            Time.timeScale = 0f;
+            //EndScreen();     
         }
     }
 }

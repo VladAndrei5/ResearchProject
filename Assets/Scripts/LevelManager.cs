@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-
+    /*
     public PersistentData persistentData;
     public Scenario currentScenarioData;
     public EntityManager entityManager;
@@ -31,6 +31,7 @@ public class LevelManager : MonoBehaviour
         //initialises the level from the current scenario data
         //LoadLevelFromScenario(currentScenarioData);
     }
+    */
 
     /*
     public void LoadLevelFromScenario(Scenario scenario){

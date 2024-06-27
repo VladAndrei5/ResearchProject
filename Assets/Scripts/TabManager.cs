@@ -145,8 +145,8 @@ public class TabManager : MonoBehaviour
 
     //it takes a tracker and sets it as selected
     public void SelectTracker(BearingTrackerBehaviour t){
-        Debug.Log("Selected");
-        if(t.isSoundSourceActive == false){
+        Debug.Log("Selected2");
+        if(t.isProducingSound == false){
             return;
         }
         //turn off the outline of previous selected tracker
@@ -321,16 +321,18 @@ public class TabManager : MonoBehaviour
     }
 
     public void Capture(){
-        if(selectedTracker != null){
-            Debug.Log(selectedTracker.getRealClass());
-            if(selectedTracker.getRealClass() == "pirate"){
-                persistentData.UpdateScore(10);
-            }
-            else{
-                persistentData.UpdateScore(-10);
-            }
-            UpdateScoreDisplay();
-            selectedTracker.Capture();
+        if(selectedTracker == null){
+            return;
         }
+
+        if(selectedTracker.getRealClass() == "pirate"){
+            persistentData.UpdateScore(10);
+        }
+        else{
+            persistentData.UpdateScore(-10);
+        }
+        UpdateScoreDisplay();
+        selectedTracker.Capture();
+        
     }
 }

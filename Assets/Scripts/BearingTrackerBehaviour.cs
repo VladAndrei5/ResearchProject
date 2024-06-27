@@ -55,7 +55,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
         child.GetComponent<SpriteRenderer>().enabled = isEnabled;
     }
 
-    public void InitaliseBehaviour(string actualClass, SoundSourceBehaviour audioSource, string id, int IDCount){
+    public void InitaliseBehaviour(string actualClass, SoundSourceBehaviour audioSource, int IDCount){
 
         //create references
         GameObject obj = GameObject.FindWithTag("Utilities");
@@ -65,16 +65,14 @@ public class BearingTrackerBehaviour : MonoBehaviour
         GameObject obj3 = GameObject.FindWithTag("EntityManager");
         entityManager = obj3.GetComponent<EntityManager>();
 
-        //set the random seed for utilities as IDCounter
-        IDCounter = IDCount;
-        utilities.ChangeRandomSeed(IDCount);
-
         //these variables never change
         realClass = actualClass;
         this.soundSourcePair = audioSource;
+        IDCounter = IDCount;
 
         //keeps track if the user overrides the AI estimation
         isTrackerSelected = false;
+        
 
         isAIactive = true;
         isProducingSound = false;
@@ -238,6 +236,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
     }
 
     public void DisplayAIEstimation(){
+        Debug.Log("DisplayAI");
         isAIactive = true;
         displayedClass = AIEstimationClass;
         UpdateDisplaySymbol();
