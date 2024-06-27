@@ -59,7 +59,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
         float stress = 70f;
         if((stress>50) && (AIEstimationConfidence < lowerConfidenceLimit)){
             Color color = spriteRenderer.color;
-            color.a = 0.3f;
+            color.a = 0.1f;
             spriteRenderer.color = color;
         }
         else{
@@ -149,9 +149,9 @@ public class BearingTrackerBehaviour : MonoBehaviour
         }
         
         //StartCoroutine(CheckAIUpdates());
-        StartCoroutine(CheckSoundLevels());
-        StartCoroutine(CheckVisibility());
-        StartCoroutine(CheckAIUpdates());
+        CheckSoundLevels();
+        CheckVisibility();
+        CheckAIUpdates();
         if(isAIactive){
             DisplayAIEstimation();
         }
@@ -178,18 +178,20 @@ public class BearingTrackerBehaviour : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private IEnumerator CheckVisibility(){
+    private void CheckVisibility(){
         if(isProducingSound && displayedClass != "none" ){
             TurnOnTracker();
         }
         else{
+            if(IDCounter == 3){
+                //Debug.Log("Turn off");
+            }
             TurnOffTracker();
         }
-        yield return null;
 
     }
 
-    private IEnumerator CheckSoundLevels(){
+    private void CheckSoundLevels(){
         //checking the dB levles
         float[] spectrumAudioSource = new float[64];
         spectrumAudioSource = soundSourcePair.RetrieveSpectrumData();
@@ -203,7 +205,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
         if(isProducingSound){
             if(totalVolume < -60f){
                 isProducingSoundProgressTimer += Time.deltaTime;
-                if(isProducingSoundProgressTimer >= 2f){
+                if(isProducingSoundProgressTimer >= 3f){
                     isProducingSound = false;
                     isProducingSoundProgressTimer = 0f;
                 }
@@ -213,22 +215,22 @@ public class BearingTrackerBehaviour : MonoBehaviour
         else{
             if(totalVolume > -55f){
                 isProducingSoundProgressTimer += Time.deltaTime;
-                if(isProducingSoundProgressTimer >= 2f){
+                if(isProducingSoundProgressTimer >= 3f){
                     isProducingSound = true;
                     isProducingSoundProgressTimer = 0f;
                 }
                 //TurnOnTracker();
             }
         }
-        
-        yield return null;
 
     }
 
     private void TurnOffTracker()
     {
         //Debug.Log("turn off");
-        tabManager.Unselect();
+        if(isTrackerSelected){
+            tabManager.Unselect();
+        }
         GetComponent<SpriteRenderer>().enabled = false;
 
     }
@@ -251,10 +253,9 @@ public class BearingTrackerBehaviour : MonoBehaviour
     }
 
     
-    private IEnumerator CheckAIUpdates(){
+    private void CheckAIUpdates(){
         if(timer <= timerAIChangeEstimation){
             timer += Time.deltaTime; // Increment the timer
-            yield return null; // Wait for the next frame
         }
         else{
             timerAIChangeEstimation = timerAIChangeEstimation + utilities.GenerateRandomNumber(persistentData.AITimeDistribution[realClass]);

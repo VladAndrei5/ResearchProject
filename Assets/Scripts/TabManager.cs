@@ -160,6 +160,7 @@ public class TabManager : MonoBehaviour
         selectedTracker = t;
 
         selectedTracker.isTrackerSelected = true;
+        selectedTracker.ToggleTrackerOutline(true);
 
         if(selectedTracker.isAIactive){
             SetToggleOn(AIEstimationToggle);
@@ -271,9 +272,11 @@ public class TabManager : MonoBehaviour
     }
 
     void Update(){
+        /*
         if(selectedTracker == null){
             Unselect();
         }
+        */
         //if the AI estimation is the one displayed then update the displayed text in the ledger in case it changed
         /*
         if(selectedTracker != null){
@@ -287,6 +290,7 @@ public class TabManager : MonoBehaviour
     }
 
     public void Unselect(){
+        Debug.Log("Unselect");
         if(selectedTracker != null){
             selectedTracker.ToggleTrackerOutline(false);
             selectedTracker.isTrackerSelected = false;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpriteOutline : MonoBehaviour
 {
-    public Color outlineColor = Color.blue;
+    public Color outlineColor = Color.white;
     public float outlineWidth = 0.1f;
 
     private SpriteRenderer spriteRenderer;
