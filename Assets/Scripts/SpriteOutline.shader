@@ -12,7 +12,11 @@ Shader "Custom/SpriteOutline"
         LOD 100
 
         CGPROGRAM
-        #pragma surface surf Lambert alpha
+        #pragma surface surf Unlit alpha
+
+        half4 LightingUnlit(SurfaceOutput s, half3 lightDir, half atten) {
+            return half4(s.Albedo, s.Alpha);
+        }
 
         sampler2D _MainTex;
         fixed4 _OutlineColor;
@@ -42,5 +46,5 @@ Shader "Custom/SpriteOutline"
         }
         ENDCG
     }
-    FallBack "Diffuse"
+    FallBack "Unlit/Transparent"
 }
