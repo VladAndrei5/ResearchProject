@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 7162669080306821493}
   - component: {fileID: 7833827482520485538}
   - component: {fileID: 5156785751037458657}
+  - component: {fileID: 3032393453788009879}
   - component: {fileID: 1819505615984120046}
-  - component: {fileID: 5783204792725136974}
   m_Layer: 0
   m_Name: BearingTracker
   m_TagString: BTracker
@@ -156,6 +156,20 @@ MonoBehaviour:
   persistentData: {fileID: 0}
   entityManager: {fileID: 0}
   IDCounter: 0
+--- !u!114 &3032393453788009879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2714028954598441527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc73a882c44054d2c94611f325623095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineColor: {r: 0.44621435, g: 0.32395872, b: 0.754717, a: 1}
+  outlineWidth: 0.1
 --- !u!114 &1819505615984120046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,20 +184,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentRenderer: {fileID: 7162669080306821493}
   childRenderer: {fileID: 758641112243654039}
---- !u!114 &5783204792725136974
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2714028954598441527}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc73a882c44054d2c94611f325623095, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineColor: {r: 0.017673366, g: 0, b: 0.24528301, a: 1}
-  outlineWidth: 0.1
 --- !u!1 &3830315692579855004
 GameObject:
   m_ObjectHideFlags: 0

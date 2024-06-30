@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpriteOutline : MonoBehaviour
+public class HoverTracker : MonoBehaviour
 {
     public Color outlineColor = Color.white;
     public float outlineWidth = 0.1f;
@@ -11,8 +11,8 @@ public class SpriteOutline : MonoBehaviour
     private Material outlineMaterial;
     private Material defaultMaterial;
 
-    private float scaleIncrease = 0.6f;
-    private float yShift = 1f;
+    private float scaleIncrease = 0.5f;
+    private float yShift = 3.3f;
 
     private Vector3 originalScale;
     private Vector3 originalPosition;
