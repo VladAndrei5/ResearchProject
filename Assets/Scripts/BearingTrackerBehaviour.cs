@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class BearingTrackerBehaviour : MonoBehaviour
 {
-
-
+    //material
+    public Material userMaterial;
+    public Material AIMaterial;
+    public Material grayMaterial;
+    public Material hoverMaterial;
     //strings
     public string realClass;
     public string AIEstimationClass;
@@ -39,11 +42,8 @@ public class BearingTrackerBehaviour : MonoBehaviour
     
 
     //other
-    private SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
     public Sprite newSprite;
-    public Color colorUser;
-    public Color colorAI;
-    public Color colorGrayedOut;
 
     //references to classes
     public TabManager tabManager;
@@ -51,21 +51,25 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public SoundSourceBehaviour soundSourcePair;
     public PersistentData persistentData;
     public EntityManager entityManager;
+    public StressDetector stressDetector;
+    public MapTrackerBehaviour mapTrackerBehaviour;
 
     public int IDCounter;
 
 
     public void CheckStressLevels(){
         float stress = 70f;
-        if((stress>50) && (AIEstimationConfidence < lowerConfidenceLimit)){
-            Color color = spriteRenderer.color;
-            color.a = 0.1f;
-            spriteRenderer.color = color;
+        if((stressDetector.getStressLevel() > 50f ) && (AIEstimationConfidence < lowerConfidenceLimit)){
+            //Color color = spriteRenderer.color;
+            //color.a = 0.1f;
+            //spriteRenderer.color = color;
+            spriteRenderer.material = grayMaterial;
         }
         else{
-            Color color = spriteRenderer.color;
-            color.a = 1f;
-            spriteRenderer.color = color;
+            //Color color = spriteRenderer.color;
+            //color.a = 1f;
+            //spriteRenderer.color = color;
+            UpdateDisplaySymbol();
         }
 
     }
@@ -76,7 +80,6 @@ public class BearingTrackerBehaviour : MonoBehaviour
     }
 
     public void InitaliseBehaviour(string actualClass, SoundSourceBehaviour audioSource, int IDCount){
-
         //create references
         GameObject obj = GameObject.FindWithTag("Utilities");
         utilities = obj.GetComponent<Utilities>();
@@ -84,36 +87,39 @@ public class BearingTrackerBehaviour : MonoBehaviour
         persistentData = obj2.GetComponent<PersistentData>();
         GameObject obj3 = GameObject.FindWithTag("EntityManager");
         entityManager = obj3.GetComponent<EntityManager>();
+        GameObject tabManagerOBJ = GameObject.FindWithTag("TabManager");
+        tabManager = tabManagerOBJ.GetComponent<TabManager>();
+        GameObject stressDetectorOBJ = GameObject.FindWithTag("StressDetector");
+        stressDetector = stressDetectorOBJ.GetComponent<StressDetector>();
 
-        //these variables never change
         realClass = actualClass;
         this.soundSourcePair = audioSource;
         IDCounter = IDCount;
 
+        //materials
+        userMaterial = new Material(Shader.Find("Custom/UserMaterial"));
+        AIMaterial = new Material(Shader.Find("Custom/AIMaterial"));
+        hoverMaterial = new Material(Shader.Find("Custom/HoverMaterial"));
+        grayMaterial = new Material(Shader.Find("Custom/GrayMaterial"));
+
+        //set material
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.material = AIMaterial;
+
         //keeps track if the user overrides the AI estimation
         isTrackerSelected = false;
         
-
         isAIactive = true;
         isProducingSound = false;
         isProducingSoundProgress = false;
 
-
-        //set up sprite renderer and colours of trackers
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        colorUser = Color.yellow;
-        colorAI = Color.white;
-        colorGrayedOut = Color.grey;
+        
 
         timerAIConfidence1 = 0f;
         timerAIConfidence2 = 0f;
 
-        //create ledger reference
-        GameObject tabManagerOBJ = GameObject.FindWithTag("TabManager");
-        tabManager = tabManagerOBJ.GetComponent<TabManager>();
-        
-        //UpdateAIEstimation();
-        //DisplayAIEstimation();
+        UpdateAIEstimation();
+        DisplayAIEstimation();
 
         timerAIChangeEstimation = 0f;
         timer = 0f;
@@ -172,10 +178,17 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
     public void Despawn(){
         Debug.Log("Despawn");
+        if(mapTrackerBehaviour != null){
+            mapTrackerBehaviour.Despawn();
+        }
         entityManager.DespawnEntity( soundSourcePair.getGameObject() ,this);
         tabManager.Unselect();
         Destroy(soundSourcePair.getGameObject());
         Destroy(gameObject);
+    }
+
+    public void SetMapTrackerBehaviour(MapTrackerBehaviour mTrack){
+        mapTrackerBehaviour = mTrack;
     }
 
     private void CheckVisibility(){
@@ -332,10 +345,10 @@ public class BearingTrackerBehaviour : MonoBehaviour
         newSprite = Resources.Load<Sprite>(spritePath);
         spriteRenderer.sprite = newSprite;
         if(isAIactive){
-            spriteRenderer.color = colorAI;
+            spriteRenderer.material = AIMaterial;
         }
         else{
-            spriteRenderer.color = colorUser;
+            spriteRenderer.material = userMaterial;
         }
         
     }
@@ -348,4 +361,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
         return realClass;
     }
 
+    public GameObject getGameObject(){
+        return gameObject;
+    }
 }

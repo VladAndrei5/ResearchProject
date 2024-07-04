@@ -10,10 +10,14 @@ public class Capture : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public TabManager tabManager;
 
+    public GameObject captureText;
+    private Vector3 textOriginalPosition;
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalSprite = spriteRenderer.sprite;
+        textOriginalPosition = captureText.transform.position;
     }
 
     void OnMouseDown()
@@ -26,8 +30,10 @@ public class Capture : MonoBehaviour
     {
         //change the sprite to the new one
         spriteRenderer.sprite = newSprite;
+        captureText.transform.position = textOriginalPosition + new Vector3(0, -5f, 0);
         yield return new WaitForSeconds(1f);
         //change back to the original sprite
+        captureText.transform.position = textOriginalPosition;
         spriteRenderer.sprite = originalSprite;
     }
 }

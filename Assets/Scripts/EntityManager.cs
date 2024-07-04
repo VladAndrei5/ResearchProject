@@ -29,6 +29,7 @@ public class EntityManager : MonoBehaviour
 
     public List<GameObject> audioSourceObjList = new List<GameObject>();
     public List<BearingTrackerBehaviour> bearingTrackerList = new List<BearingTrackerBehaviour>();
+    public List<MapTrackerBehaviour> MapTrackerList = new List<MapTrackerBehaviour>();
 
     //lists which holds and updates the relative angle of all soundsources to the beam
     public List<float> relativeAngleList = new List<float>();
@@ -87,6 +88,26 @@ public class EntityManager : MonoBehaviour
         return bearingTracker.GetComponent<BearingTrackerBehaviour>();
     }
 
+    private MapTrackerBehaviour SpawnPrefabsMapTracker(BearingTrackerBehaviour bTrack, SoundSourceBehaviour soundSource){
+        Vector3 localPosition = Vector3.zero; // Local position of the spawned prefabs relative to the parentObject
+        Vector3 localRotation = Vector3.zero; // Local rotation of the spawned prefabs relative to the parentObject
+        Vector3 localScale = Vector3.one;
+
+        //change this back to accurate
+        localPosition = new Vector3(0f, 0f, -15f);
+        localScale = new Vector3(7.5f, 7.5f, 1f);
+        localRotation = new Vector3(0f, 0f, 0f);
+
+        //Initalise bearing tracker
+        GameObject mapTracker = Instantiate(PrefabMapTracker, ParentMapTrackers.transform);
+        mapTracker.transform.localPosition = localPosition;
+        mapTracker.transform.localRotation = Quaternion.Euler(localRotation);
+        mapTracker.transform.localScale = localScale;
+        //Initalise its behaviour
+        mapTracker.GetComponent<MapTrackerBehaviour>().InitaliseBehaviour(bTrack, soundSource);
+        return mapTracker.GetComponent<MapTrackerBehaviour>();
+    }
+
 
     public void CreateInitialEntities(){
         //int numberOfEntities = utilities.GenerateRandomNumber(utilities.initialNumberOfEntitiesDistribution);
@@ -108,6 +129,8 @@ public class EntityManager : MonoBehaviour
         //spawns all the prefabs;
         GameObject audioSource = SpawnPrefabsAudioSource(audioClip, classType);
         BearingTrackerBehaviour bearingTracker = SpawnPrefabsBearingTracker(audioSource, classType);
+        MapTrackerBehaviour mapTrackerBehaviour = SpawnPrefabsMapTracker(bearingTracker, audioSource.GetComponent<SoundSourceBehaviour>());
+        bearingTracker.SetMapTrackerBehaviour(mapTrackerBehaviour);
         audioSource.GetComponent<SoundSourceBehaviour>().SetTrackerPair(bearingTracker);
 
 

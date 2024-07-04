@@ -1,10 +1,10 @@
-Shader "Custom/SpriteOutline"
-{
+Shader "Custom/UserMaterial" {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _OutlineColor ("Outline Color", Color) = (1,1,1,1)
-        _OutlineWidth ("Outline Width", Range (0, 1)) = 0.1
+        _OutlineColor ("Outline Color", Color) = (0,0,0,1)
+        _OutlineWidth ("Outline Width", Range (0, 1)) = 0.05
+        _InsideColor ("Inside Color", Color) = (0.76,1,0,1) // New property for inside color
     }
     SubShader
     {
@@ -21,6 +21,7 @@ Shader "Custom/SpriteOutline"
         sampler2D _MainTex;
         fixed4 _OutlineColor;
         float _OutlineWidth;
+        fixed4 _InsideColor; // New variable for inside color
 
         struct Input
         {
@@ -30,8 +31,10 @@ Shader "Custom/SpriteOutline"
         void surf (Input IN, inout SurfaceOutput o)
         {
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
-            o.Albedo = c.rgb;
-            o.Alpha = c.a;
+            
+            // Apply inside color
+            o.Albedo = c.rgb * _InsideColor.rgb;
+            o.Alpha = c.a * _InsideColor.a;
 
             fixed4 pixelUp = tex2D(_MainTex, IN.uv_MainTex + fixed2(0, _OutlineWidth));
             fixed4 pixelDown = tex2D(_MainTex, IN.uv_MainTex - fixed2(0, _OutlineWidth));

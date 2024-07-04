@@ -15,6 +15,7 @@ TagManager:
   - LedgerUI
   - Utilities
   - TabManager
+  - StressDetector
   layers:
   - Default
   - TransparentFX

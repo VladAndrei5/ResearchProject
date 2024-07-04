@@ -9,16 +9,18 @@ public class SoundSourceBehaviour : MonoBehaviour
 
     public string audioFile;
     public string id;
-    public float timer = 0f;
     public string realClass;
+
+    public float timer = 0f;
+    public float timeToReachDestination;
+    public float speed = 1f;
+    private float timeToChangeDirection;
+
     public Vector2 destination;
     public Vector2 initialPosition;
-    public float timeToReachDestination;
-    public AudioClip audClip;
-
-    public float speed = 1f;
     private Vector2 direction;
-    private float timeToChangeDirection;
+
+    public AudioClip audClip;
 
     public bool readyToDespawn;
    
