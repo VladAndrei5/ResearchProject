@@ -30,7 +30,7 @@ public class MapTrackerBehaviour : MonoBehaviour
 
     public void UpdatePosition(GameObject soundSource){
         float soundRot = utilities.getSoundSourceAngle(soundSource);
-        soundRot = utilities.Remap(soundRot, -180f, 180f, -50f, 50f);
+        
         Vector3 localRotation = new Vector3(0f, 0f, soundRot);
         //Vector3 currentPosition = transform.position;
         //transform.localPosition = new Vector3(soundRot * -1f, currentPosition.y, currentPosition.z);

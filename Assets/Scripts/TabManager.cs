@@ -45,14 +45,12 @@ public class TabManager : MonoBehaviour
     //handles the toggles
     //! To update description !
     private void shipToggleChanged(bool isOn){
-        Debug.Log("Ship1");
         if(!isOn){
             return;
         }
         if(!selectedTracker.isProducingSound){
             return;
         }
-        Debug.Log("Ship2");
         selectedClass = "ship";
         isAIestimationOn = false;
         Override();
@@ -145,7 +143,6 @@ public class TabManager : MonoBehaviour
 
     //it takes a tracker and sets it as selected
     public void SelectTracker(BearingTrackerBehaviour t){
-        Debug.Log("Selected2");
         if(t.isProducingSound == false){
             return;
         }
@@ -290,7 +287,6 @@ public class TabManager : MonoBehaviour
     }
 
     public void Unselect(){
-        Debug.Log("Unselect");
         if(selectedTracker != null){
             selectedTracker.ToggleTrackerOutline(false);
             selectedTracker.isTrackerSelected = false;
