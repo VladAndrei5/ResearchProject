@@ -13,6 +13,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
     //strings
     public string realClass;
     public string AIEstimationClass;
+    public string futureAIEstimationClass;
     public string userClass;
     public string displayedClass;
     public string id;
@@ -30,8 +31,8 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public float totalVolume;
     public int counter;
 
-    public float upperConfidenceLimit = 50f;
-    public float lowerConfidenceLimit = 40f;
+    public float upperConfidenceLimit = 55f;
+    public float lowerConfidenceLimit = 45f;
 
     //flags
     public bool isTrackerSelected;
@@ -60,14 +61,20 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public void CheckStressLevels(){
         float stress = 70f;
         if((stressDetector.getStressLevel() > 50f ) && (AIEstimationConfidence < lowerConfidenceLimit)){
-            //Color color = spriteRenderer.color;
-            //color.a = 0.1f;
-            //spriteRenderer.color = color;
-            spriteRenderer.material = grayMaterial;
+            Color color = spriteRenderer.color;
+            color.a = 0.1f;
+            spriteRenderer.color = color;
+            //spriteRenderer.material = grayMaterial;
+        }
+        if((stressDetector.getStressLevel() > 50f ) && (AIEstimationConfidence > upperConfidenceLimit)){
+            Color color = spriteRenderer.color;
+            color.a = 0.1f;
+            spriteRenderer.color = Color.blue;
+            //spriteRenderer.material = grayMaterial;
         }
         else{
-            //Color color = spriteRenderer.color;
-            //color.a = 1f;
+            Color color = spriteRenderer.color;
+            color.a = 1f;
             //spriteRenderer.color = color;
             UpdateDisplaySymbol();
         }
@@ -117,6 +124,19 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
         timerAIConfidence1 = 0f;
         timerAIConfidence2 = 0f;
+
+        //create initial estimation and future estimation
+        AIEstimationClass = utilities.SelectRandomWeighted(persistentData.classes, persistentData.AIClassWeights[realClass]);
+        string key = realClass + "-" + AIEstimationClass;
+
+        futureAIEstimationClass = utilities.SelectRandomWeighted(persistentData.classes, persistentData.AIClassWeights[realClass]);
+        string key2 = realClass + "-" + AIEstimationClass;
+
+        previousAIEstimationConfidence = utilities.GenerateRandomNumber(persistentData.AIConfidenceDistribution[key]);
+        futureAIEstimationConfidence = utilities.GenerateRandomNumber(persistentData.AIConfidenceDistribution[key2]);
+        timerAIChangeEstimation = utilities.GenerateRandomNumber(persistentData.AITimeDistribution[realClass]);
+        timerAIConfidence2 = timerAIChangeEstimation;
+
 
         UpdateAIEstimation();
         DisplayAIEstimation();
@@ -271,7 +291,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
             timer += Time.deltaTime; // Increment the timer
         }
         else{
-            timerAIChangeEstimation = timerAIChangeEstimation + utilities.GenerateRandomNumber(persistentData.AITimeDistribution[realClass]);
+            //timerAIChangeEstimation = timerAIChangeEstimation + utilities.GenerateRandomNumber(persistentData.AITimeDistribution[realClass]);
             UpdateAIEstimation();
             
         }
@@ -283,9 +303,22 @@ public class BearingTrackerBehaviour : MonoBehaviour
 
     public void UpdateAIEstimation(){
         //TODO implement previous and future estimation Class
-        AIEstimationClass = utilities.SelectRandomWeighted(persistentData.classes, persistentData.AIClassWeights[realClass]);
+        AIEstimationClass = futureAIEstimationClass;
+        futureAIEstimationClass = utilities.SelectRandomWeighted(persistentData.classes, persistentData.AIClassWeights[realClass]);
 
-        string key = realClass + "-" + AIEstimationClass;
+        float extraTimer = utilities.GenerateRandomNumber(persistentData.AITimeDistribution[realClass]);
+        timerAIConfidence1 = timerAIChangeEstimation;
+        timerAIChangeEstimation = timerAIChangeEstimation + extraTimer;
+        timerAIConfidence2 = timerAIChangeEstimation;
+
+        string key = realClass + "-" + futureAIEstimationClass;
+        previousAIEstimationConfidence = futureAIEstimationConfidence;
+        futureAIEstimationConfidence = utilities.GenerateRandomNumber(persistentData.AIConfidenceDistribution[key]);
+
+        /*
+        previousAIEstimationConfidence = futureAIEstimationConfidence;
+
+        string key = realClass + "-" + futureAIEstimationClass;
 
         timerAIConfidence1 = timerAIConfidence2;
         timerAIConfidence2 = timer + timerAIChangeEstimation;
@@ -294,6 +327,19 @@ public class BearingTrackerBehaviour : MonoBehaviour
         }
         previousAIEstimationConfidence = futureAIEstimationConfidence;
         futureAIEstimationConfidence = utilities.GenerateRandomNumber(persistentData.AIConfidenceDistribution[key]);
+
+
+        AIEstimationClass = utilities.SelectRandomWeighted(persistentData.classes, persistentData.AIClassWeights[realClass]);
+        string key = realClass + "-" + AIEstimationClass;
+
+        futureAIEstimationClass = utilities.SelectRandomWeighted(persistentData.classes, persistentData.AIClassWeights[realClass]);
+        string key2 = realClass + "-" + AIEstimationClass;
+
+        previousAIEstimationConfidence = utilities.GenerateRandomNumber(persistentData.AIConfidenceDistribution[key]);
+        futureAIEstimationConfidence = utilities.GenerateRandomNumber(persistentData.AIConfidenceDistribution[key2]);
+        timerAIChangeEstimation = utilities.GenerateRandomNumber(persistentData.AITimeDistribution[realClass]);
+        timerAIConfidence2 = timerAIChangeEstimation;
+        */
 
     }
 

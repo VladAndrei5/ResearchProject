@@ -17,7 +17,6 @@ public class ZoomButtonsHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
         buttonImage = GetComponent<Image>();
         buttonImage.color = normalColor;
         SetNormalState();
-        Debug.Log("Here");
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -34,12 +33,10 @@ public class ZoomButtonsHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
     {
         transform.localScale = originalScale * hoverScaleFactor;
         buttonImage.color = hoverColor;
-        Debug.Log("enter hover");
     }
 
     private void SetNormalState()
     {
-        Debug.Log("enter normal");
         transform.localScale = originalScale;
         buttonImage.color = normalColor;
     }

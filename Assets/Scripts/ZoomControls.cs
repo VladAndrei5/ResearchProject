@@ -57,7 +57,7 @@ public class ZoomControls : MonoBehaviour
         mapCamera.enabled = false;
 
         cameraToTurnOn.enabled = true;
-        Debug.Log("Hello2");
+        //Debug.Log("Hello2");
     }
 
     void DisableZoomInButtons(){

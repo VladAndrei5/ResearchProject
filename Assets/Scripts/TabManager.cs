@@ -246,7 +246,7 @@ public class TabManager : MonoBehaviour
             }
 
             textAIClass.text = newText;
-            textAIConfidence.text = selectedTracker.AIEstimationConfidence.ToString() + "%";
+            textAIConfidence.text = selectedTracker.AIEstimationConfidence.ToString("0.#") + "%";
         }
         else{
             textAIClass.text = "";
