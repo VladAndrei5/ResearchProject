@@ -59,7 +59,7 @@ public class HoverTracker : MonoBehaviour
                 previousMaterial = spriteRenderer.material;
             }
 
-            spriteRenderer.material = hoverMaterial;
+            //spriteRenderer.material = hoverMaterial;
             transform.localScale = originalScale * (1 + scaleIncrease);
             transform.position = originalPosition + new Vector3(0, yShift, 0);
         }
@@ -69,12 +69,12 @@ public class HoverTracker : MonoBehaviour
     {
         isHovering = false;
         if(spriteRenderer.enabled){
-            spriteRenderer.material = previousMaterial;
+            //spriteRenderer.material = previousMaterial;
             transform.localScale = originalScale;
             transform.position = originalPosition;
         }
     }
-
+    /*
     void ApplyHoverEffect()
     {
         if(spriteRenderer.enabled){
@@ -92,4 +92,5 @@ public class HoverTracker : MonoBehaviour
             transform.position = originalPosition;
         }
     }
+    */
 }

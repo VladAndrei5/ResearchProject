@@ -15467,7 +15467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c8b48c70a653a24dbc0970519059cf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stressLevel: 30
+  stressLevel: 70
   stressPopUpTab: {fileID: 1857708935}
   exitButton: {fileID: 993521174}
   exitPopUp: 0

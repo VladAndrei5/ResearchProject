@@ -10,6 +10,10 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public Material AIMaterial;
     public Material grayMaterial;
     public Material hoverMaterial;
+    public Material trackMaterial;
+    public Material previousMaterial;
+    public Material newMaterial;
+
     //strings
     public string realClass;
     public string AIEstimationClass;
@@ -31,8 +35,8 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public float totalVolume;
     public int counter;
 
-    public float upperConfidenceLimit = 55f;
-    public float lowerConfidenceLimit = 45f;
+    private float upperConfidenceLimit = 55f;
+    private float lowerConfidenceLimit = 45f;
 
     //flags
     public bool isTrackerSelected;
@@ -61,21 +65,37 @@ public class BearingTrackerBehaviour : MonoBehaviour
     public void CheckStressLevels(){
         float stress = 70f;
         if((stressDetector.getStressLevel() > 50f ) && (AIEstimationConfidence < lowerConfidenceLimit)){
-            Color color = spriteRenderer.color;
-            color.a = 0.1f;
-            spriteRenderer.color = color;
+            //previousMaterial = spriteRenderer.material;
+
+            spriteRenderer.material.SetFloat("_Opacity", 0.5f);
+            //spriteRenderer.material.SetColor("_OutlineColor", Color.red);
+            //spriteRenderer.material.SetFloat("_OutlineWidth", 0.1f);
+            Debug.Log("Low conf");
+
+            //Color color = spriteRenderer.color;
+            //color.a = 0.1f;
+            //spriteRenderer.color = color;
             //spriteRenderer.material = grayMaterial;
         }
-        if((stressDetector.getStressLevel() > 50f ) && (AIEstimationConfidence > upperConfidenceLimit)){
-            Color color = spriteRenderer.color;
-            color.a = 0.1f;
-            spriteRenderer.color = Color.blue;
+        else if((stressDetector.getStressLevel() > 50f ) && (AIEstimationConfidence > upperConfidenceLimit)){
+            //Color color = spriteRenderer.color;
+            //previousMaterial = spriteRenderer.material;
+
+            spriteRenderer.material.SetColor("_OutlineColor", Color.blue);
+            spriteRenderer.material.SetFloat("_OutlineWidth", 0.1f);
+
+            Debug.Log("high conf");
+
+            //color.a = 0.1f;
+            //spriteRenderer.color = Color.blue;
             //spriteRenderer.material = grayMaterial;
         }
         else{
-            Color color = spriteRenderer.color;
-            color.a = 1f;
+            //Color color = spriteRenderer.color;
+            //color.a = 1f;
             //spriteRenderer.color = color;
+            spriteRenderer.material.SetFloat("_OutlineWidth", 0f);
+            spriteRenderer.material.SetFloat("_Opacity", 1f);
             UpdateDisplaySymbol();
         }
 
@@ -108,10 +128,12 @@ public class BearingTrackerBehaviour : MonoBehaviour
         AIMaterial = new Material(Shader.Find("Custom/AIMaterial"));
         hoverMaterial = new Material(Shader.Find("Custom/HoverMaterial"));
         grayMaterial = new Material(Shader.Find("Custom/GrayMaterial"));
+        trackMaterial = new Material(Shader.Find("Custom/TrackMaterial"));
 
         //set material
         spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.material = AIMaterial;
+        //spriteRenderer.material = AIMaterial;
+        spriteRenderer.material = trackMaterial;
 
         //keeps track if the user overrides the AI estimation
         isTrackerSelected = false;
@@ -165,7 +187,7 @@ public class BearingTrackerBehaviour : MonoBehaviour
                 if (hit.collider.gameObject == gameObject)
                 {
                     if(isProducingSound){
-                        Debug.Log("Pressed");
+                        //Debug.Log("Pressed");
                         //if the tracker was pressed, then it tells the ledger that this script instance is the one selected
                         tabManager.SelectTracker(this);
                         isTrackerSelected = true;
@@ -391,10 +413,10 @@ public class BearingTrackerBehaviour : MonoBehaviour
         newSprite = Resources.Load<Sprite>(spritePath);
         spriteRenderer.sprite = newSprite;
         if(isAIactive){
-            spriteRenderer.material = AIMaterial;
+            spriteRenderer.material.SetColor("_Color", Color.white);
         }
         else{
-            spriteRenderer.material = userMaterial;
+            spriteRenderer.material.SetColor("_Color", Color.yellow);
         }
         
     }
